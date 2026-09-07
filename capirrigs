@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo de Rigs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F1420;
+  --panel: #161D2E;
+  --panel-border: #262F45;
+  --line: #4FD1C5;
+  --line-dim: #2E5B57;
+  --amber: #F2A93B;
+  --text: #E8ECF4;
+  --text-muted: #8892A6;
+  --danger: #E0654F;
+  --radius: 6px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  background-image:
+    linear-gradient(rgba(79, 209, 197, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 209, 197, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.mono { font-family: 'IBM Plex Mono', monospace; }
+
+.wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--panel-border);
+  margin-bottom: 40px;
+}
+
+.hero-figure {
+  flex: 0 0 140px;
+  width: 140px;
+  height: 180px;
+}
+
+.hero-figure svg { width: 100%; height: 100%; }
+
+.rig-line {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 340;
+  stroke-dashoffset: 340;
+  animation: draw 1.4s ease-out forwards;
+}
+
+.rig-joint {
+  fill: var(--amber);
+  opacity: 0;
+  animation: appear 0.4s ease-out forwards;
+}
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes appear { to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rig-line { animation: none; stroke-dashoffset: 0; }
+  .rig-joint { animation: none; opacity: 1; }
+}
+
+.hero-text h1 {
+  font-size: 34px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  letter-spacing: -0.01em;
+}
+
+.hero-text p {
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 46ch;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.search-input {
+  flex: 1 1 220px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--line);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  padding: 9px 14px;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  border-color: var(--line);
+  color: var(--line);
+}
+
+.admin-toggle {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.panel.hidden { display: none; }
+
+.panel h2 {
+  font-size: 15px;
+  margin: 0 0 16px;
+  color: var(--line);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field.full { grid-column: 1 / -1; }
+
+.field label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.field input, .field textarea, .field select {
+  background: var(--bg);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  padding: 9px 11px;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.field textarea { resize: vertical; min-height: 60px; }
+
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: none;
+  border-color: var(--line);
+}
+
+.btn {
+  background: var(--line);
+  color: #0B1017;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn.secondary {
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+}
+
+.form-actions { display: flex; gap: 10px; margin-top: 4px; }
+
+.admin-gate {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-gate input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  padding: 9px 11px;
+  border-radius: var(--radius);
+  font-family: inherit;
+}
+
+.gate-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin-top: 8px;
+  display: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.15s ease;
+}
+
+.card:hover { border-color: var(--line-dim); }
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.card-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.card-kind {
+  flex: 0 0 auto;
+  font-size: 11px;
+  color: var(--line);
+  border: 1px solid var(--line-dim);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.card-desc {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.card-spec {
+  color: var(--text-muted);
+  font-size: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.download-btn {
+  flex: 1;
+  text-align: center;
+  background: var(--amber);
+  color: #241703;
+  border: none;
+  padding: 10px 0;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 13.5px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  color: var(--danger);
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+footer {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+  .hero { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .hero-figure { flex-basis: 100px; width: 100px; height: 130px; }
+  .field-row { grid-template-columns: 1fr; }
+  .admin-toggle { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-figure">
+      <svg viewBox="0 0 100 130">
+        <path class="rig-line" d="M50 18 L50 70 M50 34 L28 54 M50 34 L72 54 M50 70 L32 112 M50 70 L68 112" style="animation-delay:0.1s"></path>
+        <circle class="rig-line" cx="50" cy="12" r="9" style="fill:none;stroke-dasharray:57;stroke-dashoffset:57;animation-delay:0s"></circle>
+        <circle class="rig-joint" cx="50" cy="18" r="3" style="animation-delay:0.3s"></circle>
+        <circle class="rig-joint" cx="50" cy="34" r="3" style="animation-delay:0.55s"></circle>
+        <circle class="rig-joint" cx="28" cy="54" r="3" style="animation-delay:0.8s"></circle>
+        <circle class="rig-joint" cx="72" cy="54" r="3" style="animation-delay:0.8s"></circle>
+        <circle class="rig-joint" cx="50" cy="70" r="3" style="animation-delay:1.0s"></circle>
+        <circle class="rig-joint" cx="32" cy="112" r="3" style="animation-delay:1.25s"></circle>
+        <circle class="rig-joint" cx="68" cy="112" r="3" style="animation-delay:1.25s"></circle>
+      </svg>
+    </div>
+    <div class="hero-text">
+      <h1>Catálogo de Rigs</h1>
+      <p>Rigs e modelos prontos para baixar e usar no Roblox Studio. Escolha um item abaixo para baixar o arquivo.</p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" class="search-input" id="searchInput" placeholder="Buscar por nome ou descrição...">
+    <div class="filters" id="filterButtons"></div>
+    <button class="admin-toggle" id="adminToggle">Área do criador</button>
+  </div>
+
+  <div class="panel hidden" id="gatePanel">
+    <h2>Entrar como criador</h2>
+    <div class="admin-gate">
+      <input type="password" id="gateInput" placeholder="Senha">
+      <button class="btn" id="gateSubmit">Entrar</button>
+    </div>
+    <p class="gate-error" id="gateError">Senha incorreta.</p>
+  </div>
+
+  <div class="panel hidden" id="formPanel">
+    <h2>Adicionar novo rig</h2>
+    <div class="field-row">
+      <div class="field">
+        <label for="fName">Nome</label>
+        <input type="text" id="fName" placeholder="Ex: Rig R15 Ninja">
+      </div>
+      <div class="field">
+        <label for="fKind">Categoria</label>
+        <input type="text" id="fKind" placeholder="Ex: R15, R6, Acessório...">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fFormat">Formato</label>
+        <input type="text" id="fFormat" placeholder="Ex: .rbxm">
+      </div>
+      <div class="field">
+        <label for="fSize">Tamanho</label>
+        <input type="text" id="fSize" placeholder="Ex: 6.4 MB">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field full">
+        <label for="fDesc">Descrição</label>
+        <textarea id="fDesc" placeholder="Uma frase curta sobre o rig"></textarea>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field full">
+        <label for="fUrl">Link de download</label>
+        <input type="text" id="fUrl" placeholder="Link do GitHub Releases, Drive, etc.">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn" id="addSubmit">Adicionar</button>
+      <button class="btn secondary" id="addCancel">Cancelar</button>
+    </div>
+  </div>
+
+  <main class="grid" id="grid"></main>
+
+  <footer>
+    Catálogo salvo automaticamente. Os arquivos ficam hospedados fora daqui (GitHub Releases, Drive, etc.) — este site guarda apenas o nome, a descrição e o link de cada rig.
+  </footer>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'catalogo-rigs-v1';
+const ADMIN_PASSPHRASE = 'capirs2181';
+
+let rigs = [];
+let isAdmin = false;
+let activeKind = 'Todos';
+let searchTerm = '';
+
+function seedRigs() {
+  return [
+    {
+      id: 'exemplo-1',
+      name: 'Rig R15 Padrão (exemplo)',
+      kind: 'R15',
+      format: '.rbxm',
+      size: '2.1 MB',
+      description: 'Item de exemplo. Edite ou remova pela área do criador depois de adicionar seus próprios rigs.',
+      url: '#'
+    },
+    {
+      id: 'exemplo-2',
+      name: 'Rig R6 com IK de pernas (exemplo)',
+      kind: 'R6',
+      format: '.rbxmx',
+      size: '5.8 MB',
+      description: 'Item de exemplo. Substitua pelo link real depois de subir o arquivo em um serviço de hospedagem.',
+      url: '#'
+    }
+  ];
+}
+
+async function loadRigs() {
+  try {
+    const result = await window.storage.get(STORAGE_KEY, true);
+    rigs = result ? JSON.parse(result.value) : seedRigs();
+  } catch (err) {
+    rigs = seedRigs();
+  }
+  render();
+}
+
+async function saveRigs() {
+  try {
+    await window.storage.set(STORAGE_KEY, JSON.stringify(rigs), true);
+  } catch (err) {
+    console.error('Falha ao salvar catálogo', err);
+  }
+}
+
+function uniqueKinds() {
+  const kinds = new Set(rigs.map(r => r.kind).filter(Boolean));
+  return ['Todos', ...Array.from(kinds)];
+}
+
+function renderFilters() {
+  const container = document.getElementById('filterButtons');
+  container.innerHTML = '';
+  uniqueKinds().forEach(kind => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (kind === activeKind ? ' active' : '');
+    btn.textContent = kind;
+    btn.addEventListener('click', () => {
+      activeKind = kind;
+      render();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function matchesFilters(rig) {
+  const kindMatch = activeKind === 'Todos' || rig.kind === activeKind;
+  const term = searchTerm.trim().toLowerCase();
+  const textMatch = !term ||
+    rig.name.toLowerCase().includes(term) ||
+    (rig.description || '').toLowerCase().includes(term);
+  return kindMatch && textMatch;
+}
+
+function buildCard(rig) {
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const top = document.createElement('div');
+  top.className = 'card-top';
+  const name = document.createElement('h3');
+  name.className = 'card-name';
+  name.textContent = rig.name;
+  top.appendChild(name);
+  if (rig.kind) {
+    const kindTag = document.createElement('span');
+    kindTag.className = 'card-kind';
+    kindTag.textContent = rig.kind;
+    top.appendChild(kindTag);
+  }
+  card.appendChild(top);
+
+  if (rig.description) {
+    const desc = document.createElement('p');
+    desc.className = 'card-desc';
+    desc.textContent = rig.description;
+    card.appendChild(desc);
+  }
+
+  const spec = document.createElement('div');
+  spec.className = 'card-spec mono';
+  const parts = [rig.format, rig.size].filter(Boolean);
+  spec.textContent = parts.join(' · ');
+  card.appendChild(spec);
+
+  const actions = document.createElement('div');
+  actions.className = 'card-actions';
+  const download = document.createElement('a');
+  download.className = 'download-btn';
+  download.textContent = 'Baixar';
+  download.href = rig.url || '#';
+  download.target = '_blank';
+  download.rel = 'noopener noreferrer';
+  actions.appendChild(download);
+
+  if (isAdmin) {
+    const del = document.createElement('button');
+    del.className = 'delete-btn';
+    del.textContent = 'Remover';
+    del.addEventListener('click', () => deleteRig(rig.id));
+    actions.appendChild(del);
+  }
+  card.appendChild(actions);
+
+  return card;
+}
+
+function render() {
+  renderFilters();
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const visible = rigs.filter(matchesFilters);
+  if (visible.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.textContent = 'Nenhum rig encontrado.';
+    grid.appendChild(empty);
+    return;
+  }
+  visible.forEach(rig => grid.appendChild(buildCard(rig)));
+}
+
+function deleteRig(id) {
+  rigs = rigs.filter(r => r.id !== id);
+  saveRigs();
+  render();
+}
+
+function addRig() {
+  const name = document.getElementById('fName').value.trim();
+  const url = document.getElementById('fUrl').value.trim();
+  if (!name || !url) return;
+  const newRig = {
+    id: 'rig-' + Date.now(),
+    name,
+    kind: document.getElementById('fKind').value.trim(),
+    format: document.getElementById('fFormat').value.trim(),
+    size: document.getElementById('fSize').value.trim(),
+    description: document.getElementById('fDesc').value.trim(),
+    url
+  };
+  rigs.push(newRig);
+  saveRigs();
+  ['fName','fKind','fFormat','fSize','fDesc','fUrl'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('formPanel').classList.add('hidden');
+  render();
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchTerm = e.target.value;
+  render();
+});
+
+document.getElementById('adminToggle').addEventListener('click', () => {
+  if (isAdmin) {
+    document.getElementById('formPanel').classList.toggle('hidden');
+  } else {
+    document.getElementById('gatePanel').classList.toggle('hidden');
+  }
+});
+
+document.getElementById('gateSubmit').addEventListener('click', () => {
+  const value = document.getElementById('gateInput').value;
+  if (value === ADMIN_PASSPHRASE) {
+    isAdmin = true;
+    document.getElementById('gatePanel').classList.add('hidden');
+    document.getElementById('gateInput').value = '';
+    document.getElementById('gateError').style.display = 'none';
+    document.getElementById('formPanel').classList.remove('hidden');
+    render();
+  } else {
+    document.getElementById('gateError').style.display = 'block';
+  }
+});
+
+document.getElementById('addSubmit').addEventListener('click', addRig);
+document.getElementById('addCancel').addEventListener('click', () => {
+  document.getElementById('formPanel').classList.add('hidden');
+});
+
+loadRigs();
+</script>
+</body>
+</html>
