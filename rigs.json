@@ -16,5 +16,14 @@
     "size": "1.87 MB",
     "description": "Rexnet Rig but with some optimized and updated stuff.",
     "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R6b.6.blend"
+  },
+  {
+    "id": "rig-1788825414450",
+    "name": "RevRig",
+    "kind": "R6",
+    "format": ".blend",
+    "size": "8.22 MB",
+    "description": "A advanced rig, with IK features.",
+    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/RevRig.1.7.blend"
   }
 ]
