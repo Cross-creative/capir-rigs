@@ -1,23 +1,5 @@
 [
   {
-    "id": "exemplo-1",
-    "name": "Rig R15 Padrão (exemplo)",
-    "kind": "R15",
-    "format": ".rbxm",
-    "size": "2.1 MB",
-    "description": "Item de exemplo. Depois de configurar o repositório, adicione seus próprios rigs pela área do criador.",
-    "url": "#"
-  },
-  {
-    "id": "exemplo-2",
-    "name": "Rig R6 com IK de pernas (exemplo)",
-    "kind": "R6",
-    "format": ".rbxmx",
-    "size": "5.8 MB",
-    "description": "Item de exemplo. Substitua pelo link real depois de subir o arquivo em um serviço de hospedagem.",
-    "url": "#"
-  },
-  {
     "id": "rig-1788824180404",
     "name": "Epa R6",
     "kind": "R6",
