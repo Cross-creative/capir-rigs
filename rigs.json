@@ -7,5 +7,14 @@
     "size": "1.4",
     "description": "",
     "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/55Epa.Rig.blend"
+  },
+  {
+    "id": "rig-1788824407670",
+    "name": "BetterR6",
+    "kind": "R6",
+    "format": ".blend",
+    "size": "1.87 MB",
+    "description": "Rexnet Rig but with some optimized and updated stuff.",
+    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R6b.6.blend"
   }
 ]
