@@ -25,5 +25,14 @@
     "size": "8.22 MB",
     "description": "A advanced rig, with IK features.",
     "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/RevRig.1.7.blend"
+  },
+  {
+    "id": "rig-1788825569626",
+    "name": "R15IK Rig",
+    "kind": "R15",
+    "format": ".blend",
+    "size": "5.99 MB",
+    "description": "A R15 rig with IK feature.",
+    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R15MReWork.blend"
   }
 ]
