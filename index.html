@@ -172,6 +172,8 @@ html, body {
   color: var(--line);
 }
 
+.panel p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+
 .field-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -221,13 +223,17 @@ html, body {
   cursor: pointer;
 }
 
+.btn:disabled { opacity: 0.6; cursor: default; }
+
 .btn.secondary {
   background: transparent;
   border: 1px solid var(--panel-border);
   color: var(--text);
 }
 
-.form-actions { display: flex; gap: 10px; margin-top: 4px; }
+.form-actions { display: flex; gap: 10px; margin-top: 4px; align-items: center; }
+
+.form-status { font-size: 13px; margin: 0; }
 
 .admin-gate {
   display: flex;
@@ -245,10 +251,14 @@ html, body {
   font-family: inherit;
 }
 
+.gate-hint {
+  margin-top: 10px !important;
+}
+
 .gate-error {
-  color: var(--danger);
+  color: var(--danger) !important;
   font-size: 13px;
-  margin-top: 8px;
+  margin-top: 8px !important;
   display: none;
 }
 
@@ -392,13 +402,19 @@ footer {
     <button class="admin-toggle" id="adminToggle">Área do criador</button>
   </div>
 
+  <div class="panel hidden" id="configBanner">
+    <h2>Configuração necessária</h2>
+    <p>Edite as constantes GITHUB_OWNER e GITHUB_REPO no início do &lt;script&gt; com os dados do seu repositório antes de publicar este site. Até lá, o catálogo mostra apenas itens de exemplo.</p>
+  </div>
+
   <div class="panel hidden" id="gatePanel">
     <h2>Entrar como criador</h2>
     <div class="admin-gate">
-      <input type="password" id="gateInput" placeholder="Senha">
+      <input type="password" id="gateInput" placeholder="Token de acesso do GitHub">
       <button class="btn" id="gateSubmit">Entrar</button>
     </div>
-    <p class="gate-error" id="gateError">Senha incorreta.</p>
+    <p class="gate-hint">O token precisa de permissão de leitura e escrita em "Contents" apenas neste repositório.</p>
+    <p class="gate-error" id="gateError">Não foi possível validar. Confira o token e as constantes GITHUB_OWNER/GITHUB_REPO no código.</p>
   </div>
 
   <div class="panel hidden" id="formPanel">
@@ -438,23 +454,32 @@ footer {
     <div class="form-actions">
       <button class="btn" id="addSubmit">Adicionar</button>
       <button class="btn secondary" id="addCancel">Cancelar</button>
+      <p class="form-status" id="formStatus"></p>
     </div>
   </div>
 
   <main class="grid" id="grid"></main>
 
   <footer>
-    Catálogo salvo automaticamente. Os arquivos ficam hospedados fora daqui (GitHub Releases, Drive, etc.) — este site guarda apenas o nome, a descrição e o link de cada rig.
+    O catálogo fica salvo como rigs.json no seu repositório do GitHub — qualquer pessoa que abrir este site lê esse arquivo direto do GitHub. Só quem tem o token de acesso consegue adicionar ou remover itens. Os arquivos dos rigs em si ficam hospedados fora daqui (GitHub Releases, Drive, etc.), este site guarda só o nome, a descrição e o link de cada um.
   </footer>
 
 </div>
 
 <script>
-const STORAGE_KEY = 'catalogo-rigs-v1';
-const ADMIN_PASSPHRASE = 'capirs2181';
+const GITHUB_OWNER = 'Cross-creative';
+const GITHUB_REPO = 'capir-rigs';
+const GITHUB_BRANCH = 'main';
+const DATA_PATH = 'rigs.json';
+
+const RAW_URL = 'https://raw.githubusercontent.com/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/' + GITHUB_BRANCH + '/' + DATA_PATH;
+const API_URL = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + DATA_PATH;
+const isConfigured = GITHUB_OWNER !== 'seu-usuario' && GITHUB_REPO !== 'seu-repositorio';
 
 let rigs = [];
 let isAdmin = false;
+let adminToken = '';
+let currentSha = null;
 let activeKind = 'Todos';
 let searchTerm = '';
 
@@ -466,7 +491,7 @@ function seedRigs() {
       kind: 'R15',
       format: '.rbxm',
       size: '2.1 MB',
-      description: 'Item de exemplo. Edite ou remova pela área do criador depois de adicionar seus próprios rigs.',
+      description: 'Item de exemplo. Depois de configurar o repositório, adicione seus próprios rigs pela área do criador.',
       url: '#'
     },
     {
@@ -481,22 +506,72 @@ function seedRigs() {
   ];
 }
 
+function utf8ToBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+function base64ToUtf8(str) {
+  return decodeURIComponent(escape(atob(str.replace(/\n/g, ''))));
+}
+
 async function loadRigs() {
+  const banner = document.getElementById('configBanner');
+  if (!isConfigured) {
+    banner.classList.remove('hidden');
+    rigs = seedRigs();
+    render();
+    return;
+  }
+  banner.classList.add('hidden');
   try {
-    const result = await window.storage.get(STORAGE_KEY, true);
-    rigs = result ? JSON.parse(result.value) : seedRigs();
+    const res = await fetch(RAW_URL + '?cache=' + Date.now());
+    if (!res.ok) throw new Error('not found');
+    rigs = await res.json();
   } catch (err) {
     rigs = seedRigs();
   }
   render();
 }
 
-async function saveRigs() {
-  try {
-    await window.storage.set(STORAGE_KEY, JSON.stringify(rigs), true);
-  } catch (err) {
-    console.error('Falha ao salvar catálogo', err);
+async function verifyTokenAndLoad(token) {
+  const res = await fetch(API_URL, {
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/vnd.github+json'
+    }
+  });
+  if (res.status === 404) {
+    currentSha = null;
+    return true;
   }
+  if (!res.ok) return false;
+  const data = await res.json();
+  currentSha = data.sha;
+  try {
+    rigs = JSON.parse(base64ToUtf8(data.content));
+  } catch (err) {}
+  return true;
+}
+
+async function persistRigs() {
+  const body = {
+    message: 'Atualiza catálogo de rigs',
+    content: utf8ToBase64(JSON.stringify(rigs, null, 2)),
+    branch: GITHUB_BRANCH
+  };
+  if (currentSha) body.sha = currentSha;
+  const res = await fetch(API_URL, {
+    method: 'PUT',
+    headers: {
+      Authorization: 'Bearer ' + adminToken,
+      Accept: 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('save-failed');
+  const data = await res.json();
+  currentSha = data.content.sha;
 }
 
 function uniqueKinds() {
@@ -596,32 +671,16 @@ function render() {
   visible.forEach(rig => grid.appendChild(buildCard(rig)));
 }
 
-function deleteRig(id) {
+async function deleteRig(id) {
+  const previous = rigs;
   rigs = rigs.filter(r => r.id !== id);
-  saveRigs();
   render();
-}
-
-function addRig() {
-  const name = document.getElementById('fName').value.trim();
-  const url = document.getElementById('fUrl').value.trim();
-  if (!name || !url) return;
-  const newRig = {
-    id: 'rig-' + Date.now(),
-    name,
-    kind: document.getElementById('fKind').value.trim(),
-    format: document.getElementById('fFormat').value.trim(),
-    size: document.getElementById('fSize').value.trim(),
-    description: document.getElementById('fDesc').value.trim(),
-    url
-  };
-  rigs.push(newRig);
-  saveRigs();
-  ['fName','fKind','fFormat','fSize','fDesc','fUrl'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-  document.getElementById('formPanel').classList.add('hidden');
-  render();
+  try {
+    await persistRigs();
+  } catch (err) {
+    rigs = previous;
+    render();
+  }
 }
 
 document.getElementById('searchInput').addEventListener('input', e => {
@@ -637,23 +696,79 @@ document.getElementById('adminToggle').addEventListener('click', () => {
   }
 });
 
-document.getElementById('gateSubmit').addEventListener('click', () => {
-  const value = document.getElementById('gateInput').value;
-  if (value === ADMIN_PASSPHRASE) {
+document.getElementById('gateSubmit').addEventListener('click', async () => {
+  const button = document.getElementById('gateSubmit');
+  const token = document.getElementById('gateInput').value.trim();
+  const errorEl = document.getElementById('gateError');
+  errorEl.style.display = 'none';
+  if (!isConfigured || !token) {
+    errorEl.style.display = 'block';
+    return;
+  }
+  button.disabled = true;
+  button.textContent = 'Verificando...';
+  let ok = false;
+  try {
+    ok = await verifyTokenAndLoad(token);
+  } catch (err) {
+    ok = false;
+  }
+  button.disabled = false;
+  button.textContent = 'Entrar';
+  if (ok) {
     isAdmin = true;
+    adminToken = token;
     document.getElementById('gatePanel').classList.add('hidden');
     document.getElementById('gateInput').value = '';
-    document.getElementById('gateError').style.display = 'none';
     document.getElementById('formPanel').classList.remove('hidden');
     render();
   } else {
-    document.getElementById('gateError').style.display = 'block';
+    errorEl.style.display = 'block';
   }
 });
 
-document.getElementById('addSubmit').addEventListener('click', addRig);
+document.getElementById('addSubmit').addEventListener('click', async () => {
+  const status = document.getElementById('formStatus');
+  const button = document.getElementById('addSubmit');
+  const name = document.getElementById('fName').value.trim();
+  const url = document.getElementById('fUrl').value.trim();
+  if (!name || !url) {
+    status.textContent = 'Preencha ao menos o nome e o link.';
+    status.style.color = 'var(--danger)';
+    return;
+  }
+  const newRig = {
+    id: 'rig-' + Date.now(),
+    name,
+    kind: document.getElementById('fKind').value.trim(),
+    format: document.getElementById('fFormat').value.trim(),
+    size: document.getElementById('fSize').value.trim(),
+    description: document.getElementById('fDesc').value.trim(),
+    url
+  };
+  rigs.push(newRig);
+  status.textContent = 'Salvando...';
+  status.style.color = 'var(--text-muted)';
+  button.disabled = true;
+  try {
+    await persistRigs();
+    status.textContent = 'Salvo.';
+    status.style.color = 'var(--line)';
+    ['fName','fKind','fFormat','fSize','fDesc','fUrl'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    render();
+  } catch (err) {
+    rigs.pop();
+    status.textContent = 'Não foi possível salvar. Confira o token e tente de novo.';
+    status.style.color = 'var(--danger)';
+  }
+  button.disabled = false;
+});
+
 document.getElementById('addCancel').addEventListener('click', () => {
   document.getElementById('formPanel').classList.add('hidden');
+  document.getElementById('formStatus').textContent = '';
 });
 
 loadRigs();
