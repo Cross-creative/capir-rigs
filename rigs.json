@@ -43,5 +43,14 @@
     "size": "",
     "description": "Advanced Tutorial",
     "url": "https://www.youtube.com/watch?v=hAUEJA7MrN8"
+  },
+  {
+    "id": "rig-1788833950116",
+    "name": "Animation Steps",
+    "kind": "Tutorial",
+    "format": "Youtube Video",
+    "size": "",
+    "description": "For reference",
+    "url": "https://youtu.be/Xcc2SrRNF_4?si=OQPQEvuH6tJxy-rr"
   }
 ]
