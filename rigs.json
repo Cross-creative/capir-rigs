@@ -1,74 +1,68 @@
-[
-  {
-    "id": "rig-1788824407670",
-    "name": "BetterR6",
-    "kind": "R6",
-    "format": ".blend",
-    "size": "1.87 MB",
-    "description": "Rexnet Rig but with some optimized and updated stuff.",
-    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R6b.6.blend"
-  },
-  {
-    "id": "rig-1788825414450",
-    "name": "RevRig",
-    "kind": "R6",
-    "format": ".blend",
-    "size": "8.22 MB",
-    "description": "A advanced rig, with IK features.",
-    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/RevRig.1.7.blend"
-  },
-  {
-    "id": "rig-1788825569626",
-    "name": "R15IK Rig",
-    "kind": "R15",
-    "format": ".blend",
-    "size": "5.99 MB",
-    "description": "A R15 rig with IK feature.",
-    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R15MReWork.blend"
-  },
-  {
-    "id": "rig-1788833799471",
-    "name": "Advanced R6 Walk Animation Tutorial",
-    "kind": "Tutorial",
-    "format": "Youtube Video",
-    "size": "",
-    "description": "Advanced Tutorial",
-    "url": "https://www.youtube.com/watch?v=hAUEJA7MrN8"
-  },
-  {
-    "id": "rig-1788833950116",
-    "name": "Animation Steps",
-    "kind": "Tutorial",
-    "format": "Youtube Video",
-    "size": "",
-    "description": "For reference",
-    "url": "https://youtu.be/Xcc2SrRNF_4?si=OQPQEvuH6tJxy-rr"
-  },
-  {
-    "id": "rig-1788836180789",
-    "name": "55Epa R6",
-    "kind": "R6",
-    "format": ".blend",
-    "size": "1.4 MB",
-    "description": "Unparented Legs.",
-    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/55Epa.Rig.blend"
-  },
-  {
-    "id": "rig-1788836576084",
-    "name": "R6IK",
-    "kind": "R6",
-    "format": ".blend",
-    "size": "1.25 MB",
-    "description": "Classic IK Rig",
-    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R6FK.blend"
-  },
-  {
-    "id": "rig-1788836712503",
-    "name": "ImprovedR6IK",
-    "kind": "R6",
-    "format": ".blend",
-    "size": "1.2 MB",
-    "description": "Improved version of the classic R6IK",
-    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/ImproveR6IK.blend"
-  }
-]
+{
+  "rigs": [
+    {
+      "id": "rig-1788824407670",
+      "name": "BetterR6",
+      "kind": "R6",
+      "format": ".blend",
+      "size": "1.87 MB",
+      "description": "Rexnet Rig but with some optimized and updated stuff.",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R6b.6.blend"
+    },
+    {
+      "id": "rig-1788825414450",
+      "name": "RevRig",
+      "kind": "R6",
+      "format": ".blend",
+      "size": "8.22 MB",
+      "description": "A advanced rig, with IK features.",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/RevRig.1.7.blend"
+    },
+    {
+      "id": "rig-1788825569626",
+      "name": "R15IK Rig",
+      "kind": "R15",
+      "format": ".blend",
+      "size": "5.99 MB",
+      "description": "A R15 rig with IK feature.",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R15MReWork.blend"
+    },
+    {
+      "id": "rig-1788833799471",
+      "name": "Advanced R6 Walk Animation Tutorial",
+      "kind": "Tutorial",
+      "format": "Youtube Video",
+      "size": "",
+      "description": "Advanced Tutorial",
+      "url": "https://www.youtube.com/watch?v=hAUEJA7MrN8"
+    },
+    {
+      "id": "rig-1788836180789",
+      "name": "55Epa R6",
+      "kind": "R6",
+      "format": ".blend",
+      "size": "1.4 MB",
+      "description": "Unparented Legs.",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/55Epa.Rig.blend"
+    },
+    {
+      "id": "rig-1788836576084",
+      "name": "R6IK",
+      "kind": "R6",
+      "format": ".blend",
+      "size": "1.25 MB",
+      "description": "Classic IK Rig",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R6FK.blend"
+    },
+    {
+      "id": "rig-1788836712503",
+      "name": "ImprovedR6IK",
+      "kind": "R6",
+      "format": ".blend",
+      "size": "1.2 MB",
+      "description": "Improved version of the classic R6IK",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/ImproveR6IK.blend"
+    }
+  ],
+  "videos": []
+}
