@@ -1,14 +1,5 @@
 [
   {
-    "id": "rig-1788824180404",
-    "name": "Epa R6",
-    "kind": "R6",
-    "format": ".blend",
-    "size": "1.4",
-    "description": "",
-    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/55Epa.Rig.blend"
-  },
-  {
     "id": "rig-1788824407670",
     "name": "BetterR6",
     "kind": "R6",
