@@ -43,5 +43,14 @@
     "size": "",
     "description": "For reference",
     "url": "https://youtu.be/Xcc2SrRNF_4?si=OQPQEvuH6tJxy-rr"
+  },
+  {
+    "id": "rig-1788836180789",
+    "name": "55Epa R6",
+    "kind": "R6",
+    "format": ".blend",
+    "size": "1.4 MB",
+    "description": "Unparented Legs.",
+    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/55Epa.Rig.blend"
   }
 ]
