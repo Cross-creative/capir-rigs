@@ -52,5 +52,14 @@
     "size": "1.4 MB",
     "description": "Unparented Legs.",
     "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/55Epa.Rig.blend"
+  },
+  {
+    "id": "rig-1788836576084",
+    "name": "R6IK",
+    "kind": "R6",
+    "format": ".blend",
+    "size": "1.25 MB",
+    "description": "Classic IK Rig",
+    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R6FK.blend"
   }
 ]
