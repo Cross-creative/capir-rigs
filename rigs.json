@@ -53,6 +53,15 @@
       "size": "1.2 MB",
       "description": "Improved version of the classic R6IK",
       "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/ImproveR6IK.blend"
+    },
+    {
+      "id": "rig-1788886722048",
+      "name": "BetterR15",
+      "kind": "R15",
+      "format": ".blend",
+      "size": "378 KB",
+      "description": "R15 rig but better",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R15Rig.blend"
     }
   ],
   "videos": [
