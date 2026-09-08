@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Catálogo de Rigs</title>
+<title>Rig Catalog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -97,6 +97,29 @@ html, body {
   line-height: 1.6;
   margin: 0;
   max-width: 46ch;
+}
+
+.section-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  border-color: var(--amber);
+  color: var(--amber);
 }
 
 .toolbar {
@@ -281,6 +304,16 @@ html, body {
 
 .card:hover { border-color: var(--line-dim); }
 
+.video-thumb {
+  width: calc(100% + 36px);
+  margin: -18px -18px 0;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: block;
+  background: var(--bg);
+}
+
 .card-top {
   display: flex;
   justify-content: space-between;
@@ -391,77 +424,109 @@ footer {
       </svg>
     </div>
     <div class="hero-text">
-      <h1>Catálogo de Rigs</h1>
-      <p>Rigs e modelos prontos para baixar e usar no Roblox Studio. Escolha um item abaixo para baixar o arquivo.</p>
+      <h1>Rig Catalog</h1>
+      <p>Rigs, models and videos for Roblox Studio. Pick an item below to open or download it.</p>
     </div>
+  </div>
+
+  <div class="section-tabs">
+    <button class="tab-btn active" id="tabRigs" data-section="rigs">Rigs</button>
+    <button class="tab-btn" id="tabVideos" data-section="videos">Videos</button>
   </div>
 
   <div class="toolbar">
-    <input type="text" class="search-input" id="searchInput" placeholder="Buscar por nome ou descrição...">
+    <input type="text" class="search-input" id="searchInput" placeholder="Search by name or description...">
     <div class="filters" id="filterButtons"></div>
-    <button class="admin-toggle" id="adminToggle">Área do criador</button>
+    <button class="admin-toggle" id="adminToggle">Creator area</button>
   </div>
 
   <div class="panel hidden" id="configBanner">
-    <h2>Configuração necessária</h2>
-    <p>Edite as constantes GITHUB_OWNER e GITHUB_REPO no início do &lt;script&gt; com os dados do seu repositório antes de publicar este site. Até lá, o catálogo mostra apenas itens de exemplo.</p>
+    <h2>Setup needed</h2>
+    <p>Set GITHUB_OWNER and GITHUB_REPO at the top of the &lt;script&gt; to your repository before publishing this site. Until then, the catalog only shows example items.</p>
   </div>
 
   <div class="panel hidden" id="gatePanel">
-    <h2>Entrar como criador</h2>
+    <h2>Sign in as creator</h2>
     <div class="admin-gate">
-      <input type="password" id="gateInput" placeholder="Token de acesso do GitHub">
-      <button class="btn" id="gateSubmit">Entrar</button>
+      <input type="password" id="gateInput" placeholder="GitHub access token">
+      <button class="btn" id="gateSubmit">Sign in</button>
     </div>
-    <p class="gate-hint">O token precisa de permissão de leitura e escrita em "Contents" apenas neste repositório.</p>
-    <p class="gate-error" id="gateError">Não foi possível validar. Confira o token e as constantes GITHUB_OWNER/GITHUB_REPO no código.</p>
+    <p class="gate-hint">The token needs read and write access to "Contents" on this repository only.</p>
+    <p class="gate-error" id="gateError">Couldn't validate. Check the token and the GITHUB_OWNER/GITHUB_REPO constants in the code.</p>
   </div>
 
-  <div class="panel hidden" id="formPanel">
-    <h2>Adicionar novo rig</h2>
+  <div class="panel hidden" id="rigFormPanel">
+    <h2>Add new rig</h2>
     <div class="field-row">
       <div class="field">
-        <label for="fName">Nome</label>
-        <input type="text" id="fName" placeholder="Ex: Rig R15 Ninja">
+        <label for="fName">Name</label>
+        <input type="text" id="fName" placeholder="e.g. R15 Ninja Rig">
       </div>
       <div class="field">
-        <label for="fKind">Categoria</label>
-        <input type="text" id="fKind" placeholder="Ex: R15, R6, Acessório...">
+        <label for="fKind">Category</label>
+        <input type="text" id="fKind" placeholder="e.g. R15, R6, Accessory...">
       </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label for="fFormat">Formato</label>
-        <input type="text" id="fFormat" placeholder="Ex: .rbxm">
+        <label for="fFormat">Format</label>
+        <input type="text" id="fFormat" placeholder="e.g. .rbxm">
       </div>
       <div class="field">
-        <label for="fSize">Tamanho</label>
-        <input type="text" id="fSize" placeholder="Ex: 6.4 MB">
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field full">
-        <label for="fDesc">Descrição</label>
-        <textarea id="fDesc" placeholder="Uma frase curta sobre o rig"></textarea>
+        <label for="fSize">Size</label>
+        <input type="text" id="fSize" placeholder="e.g. 6.4 MB">
       </div>
     </div>
     <div class="field-row">
       <div class="field full">
-        <label for="fUrl">Link de download</label>
-        <input type="text" id="fUrl" placeholder="Link do GitHub Releases, Drive, etc.">
+        <label for="fDesc">Description</label>
+        <textarea id="fDesc" placeholder="A short sentence about the rig"></textarea>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field full">
+        <label for="fUrl">Download link</label>
+        <input type="text" id="fUrl" placeholder="Link from GitHub Releases, Drive, etc.">
       </div>
     </div>
     <div class="form-actions">
-      <button class="btn" id="addSubmit">Adicionar</button>
-      <button class="btn secondary" id="addCancel">Cancelar</button>
-      <p class="form-status" id="formStatus"></p>
+      <button class="btn" id="rigAddSubmit">Add</button>
+      <button class="btn secondary" id="rigAddCancel">Cancel</button>
+      <p class="form-status" id="rigFormStatus"></p>
+    </div>
+  </div>
+
+  <div class="panel hidden" id="videoFormPanel">
+    <h2>Add new video</h2>
+    <div class="field-row">
+      <div class="field full">
+        <label for="vTitle">Title</label>
+        <input type="text" id="vTitle" placeholder="e.g. Rig setup walkthrough">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field full">
+        <label for="vDesc">Description</label>
+        <textarea id="vDesc" placeholder="A short sentence about the video"></textarea>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field full">
+        <label for="vUrl">Video link</label>
+        <input type="text" id="vUrl" placeholder="YouTube link, etc.">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn" id="videoAddSubmit">Add</button>
+      <button class="btn secondary" id="videoAddCancel">Cancel</button>
+      <p class="form-status" id="videoFormStatus"></p>
     </div>
   </div>
 
   <main class="grid" id="grid"></main>
 
   <footer>
-    O catálogo fica salvo como rigs.json no seu repositório do GitHub — qualquer pessoa que abrir este site lê esse arquivo direto do GitHub. Só quem tem o token de acesso consegue adicionar ou remover itens. Os arquivos dos rigs em si ficam hospedados fora daqui (GitHub Releases, Drive, etc.), este site guarda só o nome, a descrição e o link de cada um.
+    By Capis
   </footer>
 
 </div>
@@ -477,30 +542,49 @@ const API_URL = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_RE
 const isConfigured = GITHUB_OWNER !== 'seu-usuario' && GITHUB_REPO !== 'seu-repositorio';
 
 let rigs = [];
+let videos = [];
 let isAdmin = false;
 let adminToken = '';
 let currentSha = null;
-let activeKind = 'Todos';
+let activeSection = 'rigs';
+let activeKind = 'All';
 let searchTerm = '';
 
 function seedRigs() {
   return [
     {
       id: 'exemplo-1',
-      name: 'Rig R15 Padrão (exemplo)',
+      name: 'Default R15 Rig (example)',
       kind: 'R15',
       format: '.rbxm',
       size: '2.1 MB',
-      description: 'Item de exemplo. Depois de configurar o repositório, adicione seus próprios rigs pela área do criador.',
+      description: 'Example item. Add your own rigs from the creator area.',
       url: '#'
     },
     {
       id: 'exemplo-2',
-      name: 'Rig R6 com IK de pernas (exemplo)',
+      name: 'R6 Rig with leg IK (example)',
       kind: 'R6',
       format: '.rbxmx',
       size: '5.8 MB',
-      description: 'Item de exemplo. Substitua pelo link real depois de subir o arquivo em um serviço de hospedagem.',
+      description: 'Example item. Replace with a real link once the file is uploaded somewhere.',
+      url: '#'
+    }
+  ];
+}
+
+function seedVideos() {
+  return [
+    {
+      id: 'video-example-1',
+      title: 'Rig setup walkthrough (example)',
+      description: 'Example item. Replace with a real video link from the creator area.',
+      url: '#'
+    },
+    {
+      id: 'video-example-2',
+      title: 'Animation showcase (example)',
+      description: 'Example item. Remove or edit it from the creator area.',
       url: '#'
     }
   ];
@@ -514,11 +598,32 @@ function base64ToUtf8(str) {
   return decodeURIComponent(escape(atob(str.replace(/\n/g, ''))));
 }
 
-async function loadRigs() {
+function parseCatalog(data) {
+  if (Array.isArray(data)) {
+    return { rigs: data, videos: [] };
+  }
+  return { rigs: data.rigs || [], videos: data.videos || [] };
+}
+
+function extractYouTubeId(url) {
+  const match = (url || '').match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/);
+  return match ? match[1] : null;
+}
+
+function getDomain(url) {
+  try {
+    return new URL(url).hostname.replace('www.', '');
+  } catch (err) {
+    return '';
+  }
+}
+
+async function loadCatalog() {
   const banner = document.getElementById('configBanner');
   if (!isConfigured) {
     banner.classList.remove('hidden');
     rigs = seedRigs();
+    videos = seedVideos();
     render();
     return;
   }
@@ -526,9 +631,13 @@ async function loadRigs() {
   try {
     const res = await fetch(RAW_URL + '?cache=' + Date.now());
     if (!res.ok) throw new Error('not found');
-    rigs = await res.json();
+    const data = await res.json();
+    const parsed = parseCatalog(data);
+    rigs = parsed.rigs;
+    videos = parsed.videos;
   } catch (err) {
     rigs = seedRigs();
+    videos = seedVideos();
   }
   render();
 }
@@ -548,15 +657,17 @@ async function verifyTokenAndLoad(token) {
   const data = await res.json();
   currentSha = data.sha;
   try {
-    rigs = JSON.parse(base64ToUtf8(data.content));
+    const parsed = parseCatalog(JSON.parse(base64ToUtf8(data.content)));
+    rigs = parsed.rigs;
+    videos = parsed.videos;
   } catch (err) {}
   return true;
 }
 
-async function persistRigs() {
+async function persistCatalog() {
   const body = {
-    message: 'Atualiza catálogo de rigs',
-    content: utf8ToBase64(JSON.stringify(rigs, null, 2)),
+    message: 'Update rig catalog',
+    content: utf8ToBase64(JSON.stringify({ rigs: rigs, videos: videos }, null, 2)),
     branch: GITHUB_BRANCH
   };
   if (currentSha) body.sha = currentSha;
@@ -576,12 +687,13 @@ async function persistRigs() {
 
 function uniqueKinds() {
   const kinds = new Set(rigs.map(r => r.kind).filter(Boolean));
-  return ['Todos', ...Array.from(kinds)];
+  return ['All', ...Array.from(kinds)];
 }
 
 function renderFilters() {
   const container = document.getElementById('filterButtons');
   container.innerHTML = '';
+  if (activeSection !== 'rigs') return;
   uniqueKinds().forEach(kind => {
     const btn = document.createElement('button');
     btn.className = 'filter-btn' + (kind === activeKind ? ' active' : '');
@@ -594,8 +706,8 @@ function renderFilters() {
   });
 }
 
-function matchesFilters(rig) {
-  const kindMatch = activeKind === 'Todos' || rig.kind === activeKind;
+function matchesRigFilters(rig) {
+  const kindMatch = activeKind === 'All' || rig.kind === activeKind;
   const term = searchTerm.trim().toLowerCase();
   const textMatch = !term ||
     rig.name.toLowerCase().includes(term) ||
@@ -603,7 +715,14 @@ function matchesFilters(rig) {
   return kindMatch && textMatch;
 }
 
-function buildCard(rig) {
+function matchesVideoFilters(video) {
+  const term = searchTerm.trim().toLowerCase();
+  return !term ||
+    video.title.toLowerCase().includes(term) ||
+    (video.description || '').toLowerCase().includes(term);
+}
+
+function buildRigCard(rig) {
   const card = document.createElement('div');
   card.className = 'card';
 
@@ -638,7 +757,7 @@ function buildCard(rig) {
   actions.className = 'card-actions';
   const download = document.createElement('a');
   download.className = 'download-btn';
-  download.textContent = 'Baixar';
+  download.textContent = 'Download';
   download.href = rig.url || '#';
   download.target = '_blank';
   download.rel = 'noopener noreferrer';
@@ -647,8 +766,63 @@ function buildCard(rig) {
   if (isAdmin) {
     const del = document.createElement('button');
     del.className = 'delete-btn';
-    del.textContent = 'Remover';
-    del.addEventListener('click', () => deleteRig(rig.id));
+    del.textContent = 'Remove';
+    del.addEventListener('click', () => deleteItem('rigs', rig.id));
+    actions.appendChild(del);
+  }
+  card.appendChild(actions);
+
+  return card;
+}
+
+function buildVideoCard(video) {
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const youtubeId = extractYouTubeId(video.url);
+  if (youtubeId) {
+    const thumb = document.createElement('img');
+    thumb.className = 'video-thumb';
+    thumb.src = 'https://img.youtube.com/vi/' + youtubeId + '/hqdefault.jpg';
+    thumb.alt = video.title;
+    card.appendChild(thumb);
+  }
+
+  const name = document.createElement('h3');
+  name.className = 'card-name';
+  name.textContent = video.title;
+  card.appendChild(name);
+
+  if (video.description) {
+    const desc = document.createElement('p');
+    desc.className = 'card-desc';
+    desc.textContent = video.description;
+    card.appendChild(desc);
+  }
+
+  const domain = getDomain(video.url);
+  if (domain) {
+    const spec = document.createElement('div');
+    spec.className = 'card-spec mono';
+    spec.textContent = domain;
+    card.appendChild(spec);
+  }
+
+  const actions = document.createElement('div');
+  actions.className = 'card-actions';
+  const watch = document.createElement('a');
+  watch.className = 'download-btn';
+  watch.textContent = 'Watch';
+  watch.href = video.url || '#';
+  watch.target = '_blank';
+  watch.rel = 'noopener noreferrer';
+  actions.appendChild(watch);
+
+  if (isAdmin) {
+    const del = document.createElement('button');
+    del.className = 'delete-btn';
+    del.textContent = 'Remove';
+    del.addEventListener('click', () => deleteItem('videos', video.id));
     actions.appendChild(del);
   }
   card.appendChild(actions);
@@ -660,28 +834,57 @@ function render() {
   renderFilters();
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
-  const visible = rigs.filter(matchesFilters);
-  if (visible.length === 0) {
+  const items = activeSection === 'rigs'
+    ? rigs.filter(matchesRigFilters)
+    : videos.filter(matchesVideoFilters);
+  if (items.length === 0) {
     const empty = document.createElement('div');
     empty.className = 'empty-state';
-    empty.textContent = 'Nenhum rig encontrado.';
+    empty.textContent = 'No items found.';
     grid.appendChild(empty);
     return;
   }
-  visible.forEach(rig => grid.appendChild(buildCard(rig)));
+  items.forEach(item => {
+    grid.appendChild(activeSection === 'rigs' ? buildRigCard(item) : buildVideoCard(item));
+  });
 }
 
-async function deleteRig(id) {
-  const previous = rigs;
-  rigs = rigs.filter(r => r.id !== id);
+async function deleteItem(section, id) {
+  const previousRigs = rigs;
+  const previousVideos = videos;
+  if (section === 'rigs') {
+    rigs = rigs.filter(r => r.id !== id);
+  } else {
+    videos = videos.filter(v => v.id !== id);
+  }
   render();
   try {
-    await persistRigs();
+    await persistCatalog();
   } catch (err) {
-    rigs = previous;
+    rigs = previousRigs;
+    videos = previousVideos;
     render();
   }
 }
+
+function switchSection(section) {
+  activeSection = section;
+  activeKind = 'All';
+  searchTerm = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchInput').placeholder = section === 'rigs'
+    ? 'Search by name or description...'
+    : 'Search by title or description...';
+  document.getElementById('tabRigs').classList.toggle('active', section === 'rigs');
+  document.getElementById('tabVideos').classList.toggle('active', section === 'videos');
+  document.getElementById('rigFormPanel').classList.add('hidden');
+  document.getElementById('videoFormPanel').classList.add('hidden');
+  document.getElementById('gatePanel').classList.add('hidden');
+  render();
+}
+
+document.getElementById('tabRigs').addEventListener('click', () => switchSection('rigs'));
+document.getElementById('tabVideos').addEventListener('click', () => switchSection('videos'));
 
 document.getElementById('searchInput').addEventListener('input', e => {
   searchTerm = e.target.value;
@@ -690,7 +893,8 @@ document.getElementById('searchInput').addEventListener('input', e => {
 
 document.getElementById('adminToggle').addEventListener('click', () => {
   if (isAdmin) {
-    document.getElementById('formPanel').classList.toggle('hidden');
+    const panelId = activeSection === 'rigs' ? 'rigFormPanel' : 'videoFormPanel';
+    document.getElementById(panelId).classList.toggle('hidden');
   } else {
     document.getElementById('gatePanel').classList.toggle('hidden');
   }
@@ -706,7 +910,7 @@ document.getElementById('gateSubmit').addEventListener('click', async () => {
     return;
   }
   button.disabled = true;
-  button.textContent = 'Verificando...';
+  button.textContent = 'Checking...';
   let ok = false;
   try {
     ok = await verifyTokenAndLoad(token);
@@ -714,26 +918,27 @@ document.getElementById('gateSubmit').addEventListener('click', async () => {
     ok = false;
   }
   button.disabled = false;
-  button.textContent = 'Entrar';
+  button.textContent = 'Sign in';
   if (ok) {
     isAdmin = true;
     adminToken = token;
     document.getElementById('gatePanel').classList.add('hidden');
     document.getElementById('gateInput').value = '';
-    document.getElementById('formPanel').classList.remove('hidden');
+    const panelId = activeSection === 'rigs' ? 'rigFormPanel' : 'videoFormPanel';
+    document.getElementById(panelId).classList.remove('hidden');
     render();
   } else {
     errorEl.style.display = 'block';
   }
 });
 
-document.getElementById('addSubmit').addEventListener('click', async () => {
-  const status = document.getElementById('formStatus');
-  const button = document.getElementById('addSubmit');
+document.getElementById('rigAddSubmit').addEventListener('click', async () => {
+  const status = document.getElementById('rigFormStatus');
+  const button = document.getElementById('rigAddSubmit');
   const name = document.getElementById('fName').value.trim();
   const url = document.getElementById('fUrl').value.trim();
   if (!name || !url) {
-    status.textContent = 'Preencha ao menos o nome e o link.';
+    status.textContent = 'Fill in at least the name and the link.';
     status.style.color = 'var(--danger)';
     return;
   }
@@ -747,12 +952,12 @@ document.getElementById('addSubmit').addEventListener('click', async () => {
     url
   };
   rigs.push(newRig);
-  status.textContent = 'Salvando...';
+  status.textContent = 'Saving...';
   status.style.color = 'var(--text-muted)';
   button.disabled = true;
   try {
-    await persistRigs();
-    status.textContent = 'Salvo.';
+    await persistCatalog();
+    status.textContent = 'Saved.';
     status.style.color = 'var(--line)';
     ['fName','fKind','fFormat','fSize','fDesc','fUrl'].forEach(id => {
       document.getElementById(id).value = '';
@@ -760,18 +965,59 @@ document.getElementById('addSubmit').addEventListener('click', async () => {
     render();
   } catch (err) {
     rigs.pop();
-    status.textContent = 'Não foi possível salvar. Confira o token e tente de novo.';
+    status.textContent = "Couldn't save. Check the token and try again.";
     status.style.color = 'var(--danger)';
   }
   button.disabled = false;
 });
 
-document.getElementById('addCancel').addEventListener('click', () => {
-  document.getElementById('formPanel').classList.add('hidden');
-  document.getElementById('formStatus').textContent = '';
+document.getElementById('rigAddCancel').addEventListener('click', () => {
+  document.getElementById('rigFormPanel').classList.add('hidden');
+  document.getElementById('rigFormStatus').textContent = '';
 });
 
-loadRigs();
+document.getElementById('videoAddSubmit').addEventListener('click', async () => {
+  const status = document.getElementById('videoFormStatus');
+  const button = document.getElementById('videoAddSubmit');
+  const title = document.getElementById('vTitle').value.trim();
+  const url = document.getElementById('vUrl').value.trim();
+  if (!title || !url) {
+    status.textContent = 'Fill in at least the title and the link.';
+    status.style.color = 'var(--danger)';
+    return;
+  }
+  const newVideo = {
+    id: 'video-' + Date.now(),
+    title,
+    description: document.getElementById('vDesc').value.trim(),
+    url
+  };
+  videos.push(newVideo);
+  status.textContent = 'Saving...';
+  status.style.color = 'var(--text-muted)';
+  button.disabled = true;
+  try {
+    await persistCatalog();
+    status.textContent = 'Saved.';
+    status.style.color = 'var(--line)';
+    ['vTitle','vDesc','vUrl'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    render();
+  } catch (err) {
+    videos.pop();
+    status.textContent = "Couldn't save. Check the token and try again.";
+    status.style.color = 'var(--danger)';
+  }
+  button.disabled = false;
+});
+
+document.getElementById('videoAddCancel').addEventListener('click', () => {
+  document.getElementById('videoFormPanel').classList.add('hidden');
+  document.getElementById('videoFormStatus').textContent = '';
+});
+
+loadCatalog();
 </script>
 </body>
 </html>
