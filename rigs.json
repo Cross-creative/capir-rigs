@@ -62,6 +62,15 @@
       "size": "378 KB",
       "description": "R15 rig but better",
       "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R15Rig.blend"
+    },
+    {
+      "id": "rig-1788887102632",
+      "name": "Vyzons rigs/resources pack",
+      "kind": "All",
+      "format": ".zip",
+      "size": "15 MB",
+      "description": "Contains alot of resources, all credits to Vyzons",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/vyzons.blender.pack.zip"
     }
   ],
   "videos": [
