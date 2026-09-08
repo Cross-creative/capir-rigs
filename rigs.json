@@ -61,5 +61,14 @@
     "size": "1.25 MB",
     "description": "Classic IK Rig",
     "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R6FK.blend"
+  },
+  {
+    "id": "rig-1788836712503",
+    "name": "ImprovedR6IK",
+    "kind": "R6",
+    "format": ".blend",
+    "size": "1.2 MB",
+    "description": "Improved version of the classic R6IK",
+    "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/ImproveR6IK.blend"
   }
 ]
