@@ -132,6 +132,16 @@
       "size": "",
       "description": "The Animation Plugin we All know. Created by Six.",
       "url": "https://create.roblox.com/store/asset/4725618216/Moon-Animator-2-sale"
+    },
+    {
+      "id": "rig-6bd4e008-d071-459e-9498-f1a6632f7632",
+      "name": "RBX_Monkey Blender Animations",
+      "section": "plugins",
+      "kind": "Roblox Plugin",
+      "format": "",
+      "size": "",
+      "description": "A plugin that you need to import (or export) animations to roblox or vice-versa, it need another Addon on blender to work. Created by CAUTIONED",
+      "url": "https://create.roblox.com/store/asset/16708835782/RBXMonkey-Blender-Animations"
     }
   ],
   "videos": [
