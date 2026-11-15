@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rig Catalog</title>
+<title>Animator Bench</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -93,12 +95,27 @@ html, body {
   .rig-joint { animation: none; opacity: 1; }
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.brand-icon {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 auto;
+}
+
 .hero-text h1 {
   font-size: 34px;
   font-weight: 700;
   margin: 0 0 12px;
   letter-spacing: -0.01em;
 }
+
+.hero-text .brand h1 { margin: 0; }
 
 .hero-text p {
   color: var(--text-muted);
@@ -110,6 +127,7 @@ html, body {
 
 .section-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -438,6 +456,7 @@ footer {
 @media (max-width: 600px) {
   .hero { flex-direction: column; align-items: flex-start; gap: 20px; }
   .hero-figure { flex-basis: 100px; width: 100px; height: 130px; }
+  .brand-icon { width: 48px; height: 48px; }
   .field-row { grid-template-columns: 1fr; }
   .admin-toggle { margin-left: 0; }
 }
@@ -448,20 +467,25 @@ footer {
 
   <div class="hero">
     <div class="hero-figure">
-<svg id="rigSvg" viewBox="0 0 100 130" aria-hidden="true" focusable="false">
-  <g id="rigBones"></g>
-  <circle id="rigHead" class="rig-line" cx="50" cy="12" r="9" style="fill:none;stroke-dasharray:57;stroke-dashoffset:57;animation-delay:0s"></circle>
-  <g id="rigJoints"></g>
-</svg>
+      <svg id="rigSvg" viewBox="0 0 100 130" aria-hidden="true" focusable="false">
+        <g id="rigBones"></g>
+        <circle id="rigHead" class="rig-line" cx="50" cy="12" r="9" style="fill:none;stroke-dasharray:57;stroke-dashoffset:57;animation-delay:0s"></circle>
+        <g id="rigJoints"></g>
+      </svg>
     </div>
     <div class="hero-text">
-      <h1>Rig Catalog</h1>
-      <p>Rigs, models and videos for Roblox Studio. Pick an item below to open or download it.</p>
+      <div class="brand">
+        <img class="brand-icon" src="icon.png" alt="" width="64" height="64">
+        <h1>Animator Bench</h1>
+      </div>
+      <p>Rigs, resources, plugins and videos for animators. Pick an item below to open or download it.</p>
     </div>
   </div>
 
   <div class="section-tabs" role="tablist">
     <button class="tab-btn active" id="tabRigs" data-section="rigs" role="tab" aria-selected="true">Rigs</button>
+    <button class="tab-btn" id="tabResources" data-section="resources" role="tab" aria-selected="false">Resources</button>
+    <button class="tab-btn" id="tabPlugins" data-section="plugins" role="tab" aria-selected="false">Plugins/Programs</button>
     <button class="tab-btn" id="tabVideos" data-section="videos" role="tab" aria-selected="false">Videos</button>
   </div>
 
@@ -489,7 +513,17 @@ footer {
   </div>
 
   <div class="panel hidden" id="rigFormPanel">
-    <h2 id="rigFormTitle">Add new rig</h2>
+    <h2 id="rigFormTitle">Add new item</h2>
+    <div class="field-row">
+      <div class="field full">
+        <label for="fSection">Section</label>
+        <select id="fSection">
+          <option value="rigs">Rigs</option>
+          <option value="resources">Resources</option>
+          <option value="plugins">Plugins/Programs</option>
+        </select>
+      </div>
+    </div>
     <div class="field-row">
       <div class="field">
         <label for="fName">Name</label>
@@ -513,7 +547,7 @@ footer {
     <div class="field-row">
       <div class="field full">
         <label for="fDesc">Description</label>
-        <textarea id="fDesc" placeholder="A short sentence about the rig"></textarea>
+        <textarea id="fDesc" placeholder="A short sentence about the item"></textarea>
       </div>
     </div>
     <div class="field-row">
@@ -574,6 +608,8 @@ const RAW_URL = 'https://raw.githubusercontent.com/' + GITHUB_OWNER + '/' + GITH
 const API_URL = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + DATA_PATH;
 const isConfigured = GITHUB_OWNER !== 'your-username' && GITHUB_REPO !== 'your-repository';
 
+const FILE_SECTIONS = ['rigs', 'resources', 'plugins'];
+
 let rigs = [];
 let videos = [];
 let isAdmin = false;
@@ -585,6 +621,14 @@ let searchTerm = '';
 let editingRigId = null;
 let editingVideoId = null;
 let statusTimer;
+
+function isFileSection(section) {
+  return FILE_SECTIONS.includes(section);
+}
+
+function itemSection(item) {
+  return item.section || 'rigs';
+}
 
 function seedRigs() {
   return [
@@ -783,14 +827,16 @@ async function describeSaveError(err) {
 }
 
 function uniqueKinds() {
-  const kinds = new Set(rigs.map(r => r.kind).filter(Boolean));
+  const kinds = new Set(
+    rigs.filter(r => itemSection(r) === activeSection).map(r => r.kind).filter(Boolean)
+  );
   return ['All', ...Array.from(kinds)];
 }
 
 function renderFilters() {
   const container = document.getElementById('filterButtons');
   container.innerHTML = '';
-  if (activeSection !== 'rigs') return;
+  if (!isFileSection(activeSection)) return;
   uniqueKinds().forEach(kind => {
     const btn = document.createElement('button');
     btn.className = 'filter-btn' + (kind === activeKind ? ' active' : '');
@@ -804,12 +850,13 @@ function renderFilters() {
 }
 
 function matchesRigFilters(rig) {
+  const sectionMatch = itemSection(rig) === activeSection;
   const kindMatch = activeKind === 'All' || rig.kind === activeKind;
   const term = searchTerm.trim().toLowerCase();
   const textMatch = !term ||
     rig.name.toLowerCase().includes(term) ||
     (rig.description || '').toLowerCase().includes(term);
-  return kindMatch && textMatch;
+  return sectionMatch && kindMatch && textMatch;
 }
 
 function matchesVideoFilters(video) {
@@ -943,7 +990,7 @@ function render() {
   renderFilters();
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
-  const items = activeSection === 'rigs'
+  const items = isFileSection(activeSection)
     ? rigs.filter(matchesRigFilters)
     : videos.filter(matchesVideoFilters);
   if (items.length === 0) {
@@ -954,7 +1001,7 @@ function render() {
     return;
   }
   items.forEach(item => {
-    grid.appendChild(activeSection === 'rigs' ? buildRigCard(item) : buildVideoCard(item));
+    grid.appendChild(isFileSection(activeSection) ? buildRigCard(item) : buildVideoCard(item));
   });
 }
 
@@ -985,7 +1032,8 @@ function resetRigForm() {
     document.getElementById(id).value = '';
   });
   editingRigId = null;
-  document.getElementById('rigFormTitle').textContent = 'Add new rig';
+  document.getElementById('fSection').value = isFileSection(activeSection) ? activeSection : 'rigs';
+  document.getElementById('rigFormTitle').textContent = 'Add new item';
   document.getElementById('rigAddSubmit').textContent = 'Add';
 }
 
@@ -996,8 +1044,9 @@ function startEditRig(rig) {
   document.getElementById('fSize').value = rig.size || '';
   document.getElementById('fDesc').value = rig.description || '';
   document.getElementById('fUrl').value = rig.url || '';
+  document.getElementById('fSection').value = itemSection(rig);
   editingRigId = rig.id;
-  document.getElementById('rigFormTitle').textContent = 'Edit rig';
+  document.getElementById('rigFormTitle').textContent = 'Edit item';
   document.getElementById('rigAddSubmit').textContent = 'Save changes';
   document.getElementById('rigFormStatus').textContent = '';
   const panel = document.getElementById('rigFormPanel');
@@ -1031,14 +1080,22 @@ function switchSection(section) {
   activeSection = section;
   activeKind = 'All';
   searchTerm = '';
-  document.getElementById('searchInput').value = '';
-  document.getElementById('searchInput').placeholder = section === 'rigs'
-    ? 'Search by name or description...'
-    : 'Search by title or description...';
-  document.getElementById('tabRigs').classList.toggle('active', section === 'rigs');
-  document.getElementById('tabVideos').classList.toggle('active', section === 'videos');
-  document.getElementById('tabRigs').setAttribute('aria-selected', section === 'rigs');
-  document.getElementById('tabVideos').setAttribute('aria-selected', section === 'videos');
+  const search = document.getElementById('searchInput');
+  search.value = '';
+  search.placeholder = section === 'videos'
+    ? 'Search by title or description...'
+    : 'Search by name or description...';
+  const tabs = {
+    rigs: 'tabRigs',
+    resources: 'tabResources',
+    plugins: 'tabPlugins',
+    videos: 'tabVideos'
+  };
+  Object.keys(tabs).forEach(key => {
+    const tab = document.getElementById(tabs[key]);
+    tab.classList.toggle('active', key === section);
+    tab.setAttribute('aria-selected', key === section);
+  });
   resetRigForm();
   resetVideoForm();
   document.getElementById('rigFormPanel').classList.add('hidden');
@@ -1047,8 +1104,9 @@ function switchSection(section) {
   render();
 }
 
-document.getElementById('tabRigs').addEventListener('click', () => switchSection('rigs'));
-document.getElementById('tabVideos').addEventListener('click', () => switchSection('videos'));
+['Rigs', 'Resources', 'Plugins', 'Videos'].forEach(name => {
+  document.getElementById('tab' + name).addEventListener('click', () => switchSection(name.toLowerCase()));
+});
 
 document.getElementById('searchInput').addEventListener('input', e => {
   searchTerm = e.target.value;
@@ -1057,7 +1115,7 @@ document.getElementById('searchInput').addEventListener('input', e => {
 
 document.getElementById('adminToggle').addEventListener('click', () => {
   if (isAdmin) {
-    const panelId = activeSection === 'rigs' ? 'rigFormPanel' : 'videoFormPanel';
+    const panelId = activeSection === 'videos' ? 'videoFormPanel' : 'rigFormPanel';
     document.getElementById(panelId).classList.toggle('hidden');
   } else {
     document.getElementById('gatePanel').classList.toggle('hidden');
@@ -1087,7 +1145,7 @@ document.getElementById('gateSubmit').addEventListener('click', async () => {
     isAdmin = true;
     document.getElementById('gatePanel').classList.add('hidden');
     document.getElementById('gateInput').value = '';
-    const panelId = activeSection === 'rigs' ? 'rigFormPanel' : 'videoFormPanel';
+    const panelId = activeSection === 'videos' ? 'videoFormPanel' : 'rigFormPanel';
     document.getElementById(panelId).classList.remove('hidden');
     render();
   } else {
@@ -1113,6 +1171,7 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
   }
   const data = {
     name,
+    section: document.getElementById('fSection').value,
     kind: document.getElementById('fKind').value.trim(),
     format: document.getElementById('fFormat').value.trim(),
     size: document.getElementById('fSize').value.trim(),
