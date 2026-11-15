@@ -875,6 +875,40 @@ function fileExtension(url) {
   }
 }
 
+const DOWNLOAD_EXTENSIONS = [
+  '.zip', '.rar', '.7z', '.tar', '.gz', '.blend', '.rbxm', '.rbxmx', '.rbxl', '.rbxlx',
+  '.fbx', '.obj', '.dae', '.glb', '.gltf', '.exe', '.msi', '.dmg', '.apk', '.jar',
+  '.lua', '.luau', '.pdf', '.psd'
+];
+
+const DOWNLOAD_HOSTS = [
+  'drive.google.com', 'dropbox.com', 'mediafire.com', 'mega.nz', 'mega.io', 'gofile.io',
+  'catbox.moe', 'pixeldrain.com', 'cdn.discordapp.com', 'media.discordapp.net',
+  'raw.githubusercontent.com'
+];
+
+function isDownloadUrl(url) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch (err) {
+    return false;
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return false;
+  const host = parsed.hostname.toLowerCase();
+  if (host === 'roblox.com' || host.endsWith('.roblox.com')) return false;
+  if (DOWNLOAD_HOSTS.some(h => host === h || host.endsWith('.' + h))) return true;
+  if (host === 'github.com' && /\/(releases\/download|archive)\//.test(parsed.pathname)) return true;
+  const params = parsed.searchParams;
+  if (params.get('dl') === '1' || params.get('export') === 'download' || params.has('download')) return true;
+  return DOWNLOAD_EXTENSIONS.includes(fileExtension(url));
+}
+
+function isFileItem(item) {
+  if (isRobloxUrl(item.url)) return false;
+  return isDownloadUrl(item.url) || Boolean(item.format || item.size);
+}
+
 function formatBytes(bytes) {
   const units = ['B', 'KB', 'MB', 'GB'];
   let value = bytes;
@@ -916,9 +950,9 @@ async function fetchFileSize(url) {
 }
 
 async function detectFileInfo(url) {
-  if (isRobloxUrl(url)) return { roblox: true, format: '', size: '' };
+  if (!isDownloadUrl(url)) return { download: false, roblox: isRobloxUrl(url), format: '', size: '' };
   const bytes = await fetchFileSize(url);
-  return { roblox: false, format: fileExtension(url), size: bytes ? formatBytes(bytes) : '' };
+  return { download: true, roblox: false, format: fileExtension(url), size: bytes ? formatBytes(bytes) : '' };
 }
 
 async function loadCatalog() {
@@ -1076,10 +1110,12 @@ function buildRigCard(rig) {
     card.appendChild(desc);
   }
 
-  const roblox = isRobloxUrl(rig.url);
+  const isFile = isFileItem(rig);
   const spec = document.createElement('div');
   spec.className = 'card-spec mono';
-  const parts = roblox ? ['Roblox Marketplace'] : [rig.format, rig.size].filter(Boolean);
+  const parts = isFile
+    ? [rig.format, rig.size].filter(Boolean)
+    : [isRobloxUrl(rig.url) ? 'Roblox Marketplace' : getDomain(rig.url)].filter(Boolean);
   spec.textContent = parts.join(' · ');
   card.appendChild(spec);
 
@@ -1087,7 +1123,7 @@ function buildRigCard(rig) {
   actions.className = 'card-actions';
   const download = document.createElement('a');
   download.className = 'download-btn';
-  download.textContent = roblox ? 'View on Roblox' : 'Download';
+  download.textContent = isFile ? 'Download' : 'View';
   download.href = safeUrl(rig.url);
   download.target = '_blank';
   download.rel = 'noopener noreferrer';
@@ -1360,7 +1396,7 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
   if (isRobloxUrl(url)) {
     format = '';
     size = '';
-  } else if (!format || !size) {
+  } else if (isDownloadUrl(url) && (!format || !size)) {
     status.textContent = 'Detecting file info...';
     status.style.color = 'var(--text-muted)';
     button.disabled = true;
@@ -1658,10 +1694,12 @@ document.getElementById('fUrl').addEventListener('change', async () => {
   if (urlField.value.trim() !== url) return;
   const formatField = document.getElementById('fFormat');
   const sizeField = document.getElementById('fSize');
-  if (info.roblox) {
+  if (!info.download) {
     formatField.value = '';
     sizeField.value = '';
-    status.textContent = 'Roblox link detected.';
+    status.textContent = info.roblox
+      ? 'Roblox link detected. The button will say View.'
+      : 'No file detected. The button will say View.';
     status.style.color = 'var(--line)';
     return;
   }
