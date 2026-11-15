@@ -87,7 +87,7 @@
       "id": "rig-0f6c0eef-ea45-4e32-a7c3-9f10e37748ab",
       "name": "Xray Skeleton",
       "section": "resources",
-      "kind": "Resource",
+      "kind": "Resources",
       "format": "rbxm",
       "size": "50.7 KB",
       "description": "Roblox Skeleton Xray",
