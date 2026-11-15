@@ -102,6 +102,16 @@
       "size": "9.06 MB",
       "description": "Alot of Blades",
       "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/Kamas_Unlimited_Blade_Works.1.rbxl"
+    },
+    {
+      "id": "rig-a91a27b1-20c0-44f5-a077-73d13a7a09f4",
+      "name": "Hand Rig",
+      "section": "resources",
+      "kind": "Resources",
+      "format": ".rbxm",
+      "size": "29.2 KB",
+      "description": "Hand Rig, by LeftRight.",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/Hand.Rig-Fixed.1.rbxm"
     }
   ],
   "videos": [
