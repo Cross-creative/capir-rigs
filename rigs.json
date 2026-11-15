@@ -70,7 +70,8 @@
       "format": ".zip",
       "size": "15 MB",
       "description": "alot of resources, by Vyzons.",
-      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/vyzons.blender.pack.zip"
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/vyzons.blender.pack.zip",
+      "section": "resources"
     }
   ],
   "videos": [
