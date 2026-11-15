@@ -658,11 +658,11 @@ footer {
     <div class="field-row">
       <div class="field">
         <label for="fFormat">Format</label>
-        <input type="text" id="fFormat" placeholder="e.g. .rbxm">
+        <input type="text" id="fFormat" placeholder="Auto-detected from the link">
       </div>
       <div class="field">
         <label for="fSize">Size</label>
-        <input type="text" id="fSize" placeholder="e.g. 6.4 MB">
+        <input type="text" id="fSize" placeholder="Auto-detected when possible">
       </div>
     </div>
     <div class="field-row">
@@ -673,8 +673,8 @@ footer {
     </div>
     <div class="field-row">
       <div class="field full">
-        <label for="fUrl">Download link</label>
-        <input type="text" id="fUrl" placeholder="Link from GitHub Releases, Drive, etc.">
+        <label for="fUrl">Link</label>
+        <input type="text" id="fUrl" placeholder="GitHub Releases, Drive, Roblox Marketplace, etc.">
       </div>
     </div>
     <div class="form-actions">
@@ -857,6 +857,70 @@ function getDomain(url) {
   }
 }
 
+function isRobloxUrl(url) {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === 'roblox.com' || host.endsWith('.roblox.com');
+  } catch (err) {
+    return false;
+  }
+}
+
+function fileExtension(url) {
+  try {
+    const match = new URL(url).pathname.match(/\.[A-Za-z0-9]+$/);
+    return match ? match[0].toLowerCase() : '';
+  } catch (err) {
+    return '';
+  }
+}
+
+function formatBytes(bytes) {
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let value = bytes;
+  let i = 0;
+  while (value >= 1024 && i < units.length - 1) {
+    value /= 1024;
+    i++;
+  }
+  if (i === 0) return value + ' B';
+  if (i === 1) return Math.round(value) + ' KB';
+  return parseFloat(value.toFixed(2)) + ' ' + units[i];
+}
+
+async function fetchFileSize(url) {
+  const gh = url.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/releases\/download\/([^/]+)\/([^?#]+)/);
+  if (gh) {
+    const [, owner, repo, tag, file] = gh;
+    try {
+      const res = await fetch(
+        'https://api.github.com/repos/' + owner + '/' + repo + '/releases/tags/' + tag,
+        { headers: authHeaders() }
+      );
+      if (!res.ok) return null;
+      const data = await res.json();
+      const name = decodeURIComponent(file);
+      const asset = (data.assets || []).find(a => a.name === name || a.browser_download_url === url);
+      return asset ? asset.size : null;
+    } catch (err) {
+      return null;
+    }
+  }
+  try {
+    const res = await fetch(url, { method: 'HEAD' });
+    const length = res.headers.get('content-length');
+    return length ? parseInt(length, 10) : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+async function detectFileInfo(url) {
+  if (isRobloxUrl(url)) return { roblox: true, format: '', size: '' };
+  const bytes = await fetchFileSize(url);
+  return { roblox: false, format: fileExtension(url), size: bytes ? formatBytes(bytes) : '' };
+}
+
 async function loadCatalog() {
   const banner = document.getElementById('configBanner');
   if (!isConfigured) {
@@ -1012,9 +1076,10 @@ function buildRigCard(rig) {
     card.appendChild(desc);
   }
 
+  const roblox = isRobloxUrl(rig.url);
   const spec = document.createElement('div');
   spec.className = 'card-spec mono';
-  const parts = [rig.format, rig.size].filter(Boolean);
+  const parts = roblox ? ['Roblox Marketplace'] : [rig.format, rig.size].filter(Boolean);
   spec.textContent = parts.join(' · ');
   card.appendChild(spec);
 
@@ -1022,7 +1087,7 @@ function buildRigCard(rig) {
   actions.className = 'card-actions';
   const download = document.createElement('a');
   download.className = 'download-btn';
-  download.textContent = 'Download';
+  download.textContent = roblox ? 'View on Roblox' : 'Download';
   download.href = safeUrl(rig.url);
   download.target = '_blank';
   download.rel = 'noopener noreferrer';
@@ -1290,12 +1355,26 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
     status.style.color = 'var(--danger)';
     return;
   }
+  let format = document.getElementById('fFormat').value.trim();
+  let size = document.getElementById('fSize').value.trim();
+  if (isRobloxUrl(url)) {
+    format = '';
+    size = '';
+  } else if (!format || !size) {
+    status.textContent = 'Detecting file info...';
+    status.style.color = 'var(--text-muted)';
+    button.disabled = true;
+    const info = await detectFileInfo(url);
+    button.disabled = false;
+    if (!format) format = info.format;
+    if (!size) size = info.size;
+  }
   const data = {
     name,
     section: document.getElementById('fSection').value,
     kind: document.getElementById('fKind').value.trim(),
-    format: document.getElementById('fFormat').value.trim(),
-    size: document.getElementById('fSize').value.trim(),
+    format,
+    size,
     description: document.getElementById('fDesc').value.trim(),
     url
   };
@@ -1567,6 +1646,35 @@ function releaseRig(e) {
 
 rigSvg.addEventListener('pointerup', releaseRig);
 rigSvg.addEventListener('pointercancel', releaseRig);
+
+document.getElementById('fUrl').addEventListener('change', async () => {
+  const urlField = document.getElementById('fUrl');
+  const url = urlField.value.trim();
+  const status = document.getElementById('rigFormStatus');
+  if (!isValidUrl(url)) return;
+  status.textContent = 'Checking link...';
+  status.style.color = 'var(--text-muted)';
+  const info = await detectFileInfo(url);
+  if (urlField.value.trim() !== url) return;
+  const formatField = document.getElementById('fFormat');
+  const sizeField = document.getElementById('fSize');
+  if (info.roblox) {
+    formatField.value = '';
+    sizeField.value = '';
+    status.textContent = 'Roblox link detected.';
+    status.style.color = 'var(--line)';
+    return;
+  }
+  if (info.format) formatField.value = info.format;
+  if (info.size) {
+    sizeField.value = info.size;
+    status.textContent = 'Size detected: ' + info.size;
+    status.style.color = 'var(--line)';
+  } else {
+    status.textContent = "Couldn't detect the size automatically.";
+    status.style.color = 'var(--text-muted)';
+  }
+});
 
 requestAnimationFrame(rigLoop);
 
