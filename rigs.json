@@ -142,6 +142,16 @@
       "size": "",
       "description": "A plugin that you need to import (or export) animations to roblox or vice-versa, it need another Addon on blender to work. Created by CAUTIONED",
       "url": "https://create.roblox.com/store/asset/16708835782/RBXMonkey-Blender-Animations"
+    },
+    {
+      "id": "rig-da3a60dc-6a1f-46d6-89f7-b24a2935dd3c",
+      "name": "RBX_Monkey Blender Addon",
+      "section": "plugins",
+      "kind": "Blender Addon",
+      "format": "",
+      "size": "",
+      "description": "RBX_Monkey Blender Addon. Created by CAUTIONED",
+      "url": "https://github.com/Cautioned/Blender-Animations-Plugin?tab=readme-ov-file"
     }
   ],
   "videos": [
