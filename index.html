@@ -171,12 +171,24 @@ html, body {
 .admin-toggle {
   margin-left: auto;
   background: transparent;
-  border: none;
-  color: var(--text-muted);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  font-family: inherit;
   font-size: 13px;
-  text-decoration: underline;
+  padding: 9px 14px;
+  border-radius: var(--radius);
   cursor: pointer;
-  padding: 8px;
+}
+
+.admin-toggle:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.global-status {
+  font-size: 13px;
+  margin: 0 0 16px;
+  min-height: 18px;
 }
 
 .panel {
@@ -372,6 +384,16 @@ html, body {
   cursor: pointer;
 }
 
+.edit-btn {
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+}
+
 .delete-btn {
   background: transparent;
   border: 1px solid var(--panel-border);
@@ -387,6 +409,12 @@ html, body {
   text-align: center;
   padding: 60px 20px;
   color: var(--text-muted);
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
 }
 
 footer {
@@ -411,7 +439,7 @@ footer {
 
   <div class="hero">
     <div class="hero-figure">
-      <svg viewBox="0 0 100 130">
+      <svg viewBox="0 0 100 130" aria-hidden="true" focusable="false">
         <path class="rig-line" d="M50 18 L50 70 M50 34 L28 54 M50 34 L72 54 M50 70 L32 112 M50 70 L68 112" style="animation-delay:0.1s"></path>
         <circle class="rig-line" cx="50" cy="12" r="9" style="fill:none;stroke-dasharray:57;stroke-dashoffset:57;animation-delay:0s"></circle>
         <circle class="rig-joint" cx="50" cy="18" r="3" style="animation-delay:0.3s"></circle>
@@ -429,9 +457,9 @@ footer {
     </div>
   </div>
 
-  <div class="section-tabs">
-    <button class="tab-btn active" id="tabRigs" data-section="rigs">Rigs</button>
-    <button class="tab-btn" id="tabVideos" data-section="videos">Videos</button>
+  <div class="section-tabs" role="tablist">
+    <button class="tab-btn active" id="tabRigs" data-section="rigs" role="tab" aria-selected="true">Rigs</button>
+    <button class="tab-btn" id="tabVideos" data-section="videos" role="tab" aria-selected="false">Videos</button>
   </div>
 
   <div class="toolbar">
@@ -439,6 +467,8 @@ footer {
     <div class="filters" id="filterButtons"></div>
     <button class="admin-toggle" id="adminToggle">Creator area</button>
   </div>
+
+  <p class="global-status" id="globalStatus" role="status" aria-live="polite"></p>
 
   <div class="panel hidden" id="configBanner">
     <h2>Setup needed</h2>
@@ -456,7 +486,7 @@ footer {
   </div>
 
   <div class="panel hidden" id="rigFormPanel">
-    <h2>Add new rig</h2>
+    <h2 id="rigFormTitle">Add new rig</h2>
     <div class="field-row">
       <div class="field">
         <label for="fName">Name</label>
@@ -497,7 +527,7 @@ footer {
   </div>
 
   <div class="panel hidden" id="videoFormPanel">
-    <h2>Add new video</h2>
+    <h2 id="videoFormTitle">Add new video</h2>
     <div class="field-row">
       <div class="field full">
         <label for="vTitle">Title</label>
@@ -539,7 +569,7 @@ const DATA_PATH = 'rigs.json';
 
 const RAW_URL = 'https://raw.githubusercontent.com/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/' + GITHUB_BRANCH + '/' + DATA_PATH;
 const API_URL = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + DATA_PATH;
-const isConfigured = GITHUB_OWNER !== 'seu-usuario' && GITHUB_REPO !== 'seu-repositorio';
+const isConfigured = GITHUB_OWNER !== 'your-username' && GITHUB_REPO !== 'your-repository';
 
 let rigs = [];
 let videos = [];
@@ -549,6 +579,9 @@ let currentSha = null;
 let activeSection = 'rigs';
 let activeKind = 'All';
 let searchTerm = '';
+let editingRigId = null;
+let editingVideoId = null;
+let statusTimer;
 
 function seedRigs() {
   return [
@@ -591,11 +624,49 @@ function seedVideos() {
 }
 
 function utf8ToBase64(str) {
-  return btoa(unescape(encodeURIComponent(str)));
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  bytes.forEach(b => { binary += String.fromCharCode(b); });
+  return btoa(binary);
 }
 
 function base64ToUtf8(str) {
-  return decodeURIComponent(escape(atob(str.replace(/\n/g, ''))));
+  const binary = atob(str.replace(/\n/g, ''));
+  const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+function isValidUrl(url) {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch (err) {
+    return false;
+  }
+}
+
+function safeUrl(url) {
+  try {
+    const parsed = new URL(url, window.location.href);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : '#';
+  } catch (err) {
+    return '#';
+  }
+}
+
+function newId(prefix) {
+  const unique = window.crypto && crypto.randomUUID
+    ? crypto.randomUUID()
+    : Date.now() + '-' + Math.random().toString(36).slice(2);
+  return prefix + '-' + unique;
+}
+
+function showGlobalStatus(text, color) {
+  const el = document.getElementById('globalStatus');
+  el.textContent = text;
+  el.style.color = color;
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => { el.textContent = ''; }, 5000);
 }
 
 function parseCatalog(data) {
@@ -642,18 +713,35 @@ async function loadCatalog() {
   render();
 }
 
+function authHeaders() {
+  return {
+    Authorization: 'Bearer ' + adminToken,
+    Accept: 'application/vnd.github+json'
+  };
+}
+
+async function refreshFromRemote() {
+  const res = await fetch(API_URL + '?ref=' + GITHUB_BRANCH + '&t=' + Date.now(), { headers: authHeaders() });
+  if (!res.ok) return false;
+  const data = await res.json();
+  currentSha = data.sha;
+  const parsed = parseCatalog(JSON.parse(base64ToUtf8(data.content)));
+  rigs = parsed.rigs;
+  videos = parsed.videos;
+  return true;
+}
+
 async function verifyTokenAndLoad(token) {
-  const res = await fetch(API_URL, {
-    headers: {
-      Authorization: 'Bearer ' + token,
-      Accept: 'application/vnd.github+json'
-    }
-  });
+  adminToken = token;
+  const res = await fetch(API_URL + '?ref=' + GITHUB_BRANCH, { headers: authHeaders() });
   if (res.status === 404) {
     currentSha = null;
     return true;
   }
-  if (!res.ok) return false;
+  if (!res.ok) {
+    adminToken = '';
+    return false;
+  }
   const data = await res.json();
   currentSha = data.sha;
   try {
@@ -673,16 +761,22 @@ async function persistCatalog() {
   if (currentSha) body.sha = currentSha;
   const res = await fetch(API_URL, {
     method: 'PUT',
-    headers: {
-      Authorization: 'Bearer ' + adminToken,
-      Accept: 'application/vnd.github+json',
-      'Content-Type': 'application/json'
-    },
+    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
+  if (res.status === 409 || res.status === 422) throw new Error('conflict');
   if (!res.ok) throw new Error('save-failed');
   const data = await res.json();
   currentSha = data.content.sha;
+}
+
+async function describeSaveError(err) {
+  if (err && err.message === 'conflict') {
+    try { await refreshFromRemote(); } catch (e) {}
+    render();
+    return 'The catalog was changed elsewhere. Latest version loaded, please try again.';
+  }
+  return "Couldn't save. Check the token and try again.";
 }
 
 function uniqueKinds() {
@@ -758,12 +852,18 @@ function buildRigCard(rig) {
   const download = document.createElement('a');
   download.className = 'download-btn';
   download.textContent = 'Download';
-  download.href = rig.url || '#';
+  download.href = safeUrl(rig.url);
   download.target = '_blank';
   download.rel = 'noopener noreferrer';
   actions.appendChild(download);
 
   if (isAdmin) {
+    const edit = document.createElement('button');
+    edit.className = 'edit-btn';
+    edit.textContent = 'Edit';
+    edit.addEventListener('click', () => startEditRig(rig));
+    actions.appendChild(edit);
+
     const del = document.createElement('button');
     del.className = 'delete-btn';
     del.textContent = 'Remove';
@@ -813,12 +913,18 @@ function buildVideoCard(video) {
   const watch = document.createElement('a');
   watch.className = 'download-btn';
   watch.textContent = 'Watch';
-  watch.href = video.url || '#';
+  watch.href = safeUrl(video.url);
   watch.target = '_blank';
   watch.rel = 'noopener noreferrer';
   actions.appendChild(watch);
 
   if (isAdmin) {
+    const edit = document.createElement('button');
+    edit.className = 'edit-btn';
+    edit.textContent = 'Edit';
+    edit.addEventListener('click', () => startEditVideo(video));
+    actions.appendChild(edit);
+
     const del = document.createElement('button');
     del.className = 'delete-btn';
     del.textContent = 'Remove';
@@ -850,6 +956,7 @@ function render() {
 }
 
 async function deleteItem(section, id) {
+  if (!confirm('Remove this item?')) return;
   const previousRigs = rigs;
   const previousVideos = videos;
   if (section === 'rigs') {
@@ -860,11 +967,61 @@ async function deleteItem(section, id) {
   render();
   try {
     await persistCatalog();
+    showGlobalStatus('Removed.', 'var(--line)');
   } catch (err) {
     rigs = previousRigs;
     videos = previousVideos;
+    const message = await describeSaveError(err);
     render();
+    showGlobalStatus(message, 'var(--danger)');
   }
+}
+
+function resetRigForm() {
+  ['fName', 'fKind', 'fFormat', 'fSize', 'fDesc', 'fUrl'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  editingRigId = null;
+  document.getElementById('rigFormTitle').textContent = 'Add new rig';
+  document.getElementById('rigAddSubmit').textContent = 'Add';
+}
+
+function startEditRig(rig) {
+  document.getElementById('fName').value = rig.name || '';
+  document.getElementById('fKind').value = rig.kind || '';
+  document.getElementById('fFormat').value = rig.format || '';
+  document.getElementById('fSize').value = rig.size || '';
+  document.getElementById('fDesc').value = rig.description || '';
+  document.getElementById('fUrl').value = rig.url || '';
+  editingRigId = rig.id;
+  document.getElementById('rigFormTitle').textContent = 'Edit rig';
+  document.getElementById('rigAddSubmit').textContent = 'Save changes';
+  document.getElementById('rigFormStatus').textContent = '';
+  const panel = document.getElementById('rigFormPanel');
+  panel.classList.remove('hidden');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetVideoForm() {
+  ['vTitle', 'vDesc', 'vUrl'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  editingVideoId = null;
+  document.getElementById('videoFormTitle').textContent = 'Add new video';
+  document.getElementById('videoAddSubmit').textContent = 'Add';
+}
+
+function startEditVideo(video) {
+  document.getElementById('vTitle').value = video.title || '';
+  document.getElementById('vDesc').value = video.description || '';
+  document.getElementById('vUrl').value = video.url || '';
+  editingVideoId = video.id;
+  document.getElementById('videoFormTitle').textContent = 'Edit video';
+  document.getElementById('videoAddSubmit').textContent = 'Save changes';
+  document.getElementById('videoFormStatus').textContent = '';
+  const panel = document.getElementById('videoFormPanel');
+  panel.classList.remove('hidden');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function switchSection(section) {
@@ -877,6 +1034,10 @@ function switchSection(section) {
     : 'Search by title or description...';
   document.getElementById('tabRigs').classList.toggle('active', section === 'rigs');
   document.getElementById('tabVideos').classList.toggle('active', section === 'videos');
+  document.getElementById('tabRigs').setAttribute('aria-selected', section === 'rigs');
+  document.getElementById('tabVideos').setAttribute('aria-selected', section === 'videos');
+  resetRigForm();
+  resetVideoForm();
   document.getElementById('rigFormPanel').classList.add('hidden');
   document.getElementById('videoFormPanel').classList.add('hidden');
   document.getElementById('gatePanel').classList.add('hidden');
@@ -921,13 +1082,13 @@ document.getElementById('gateSubmit').addEventListener('click', async () => {
   button.textContent = 'Sign in';
   if (ok) {
     isAdmin = true;
-    adminToken = token;
     document.getElementById('gatePanel').classList.add('hidden');
     document.getElementById('gateInput').value = '';
     const panelId = activeSection === 'rigs' ? 'rigFormPanel' : 'videoFormPanel';
     document.getElementById(panelId).classList.remove('hidden');
     render();
   } else {
+    adminToken = '';
     errorEl.style.display = 'block';
   }
 });
@@ -942,8 +1103,12 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
     status.style.color = 'var(--danger)';
     return;
   }
-  const newRig = {
-    id: 'rig-' + Date.now(),
+  if (!isValidUrl(url)) {
+    status.textContent = 'The link must start with http:// or https://.';
+    status.style.color = 'var(--danger)';
+    return;
+  }
+  const data = {
     name,
     kind: document.getElementById('fKind').value.trim(),
     format: document.getElementById('fFormat').value.trim(),
@@ -951,27 +1116,31 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
     description: document.getElementById('fDesc').value.trim(),
     url
   };
-  rigs.push(newRig);
+  const previousRigs = rigs;
+  if (editingRigId) {
+    rigs = rigs.map(r => r.id === editingRigId ? { ...r, ...data } : r);
+  } else {
+    rigs = [...rigs, { id: newId('rig'), ...data }];
+  }
   status.textContent = 'Saving...';
   status.style.color = 'var(--text-muted)';
   button.disabled = true;
   try {
     await persistCatalog();
+    resetRigForm();
     status.textContent = 'Saved.';
     status.style.color = 'var(--line)';
-    ['fName','fKind','fFormat','fSize','fDesc','fUrl'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
     render();
   } catch (err) {
-    rigs.pop();
-    status.textContent = "Couldn't save. Check the token and try again.";
+    rigs = previousRigs;
+    status.textContent = await describeSaveError(err);
     status.style.color = 'var(--danger)';
   }
   button.disabled = false;
 });
 
 document.getElementById('rigAddCancel').addEventListener('click', () => {
+  resetRigForm();
   document.getElementById('rigFormPanel').classList.add('hidden');
   document.getElementById('rigFormStatus').textContent = '';
 });
@@ -986,38 +1155,47 @@ document.getElementById('videoAddSubmit').addEventListener('click', async () => 
     status.style.color = 'var(--danger)';
     return;
   }
-  const newVideo = {
-    id: 'video-' + Date.now(),
+  if (!isValidUrl(url)) {
+    status.textContent = 'The link must start with http:// or https://.';
+    status.style.color = 'var(--danger)';
+    return;
+  }
+  const data = {
     title,
     description: document.getElementById('vDesc').value.trim(),
     url
   };
-  videos.push(newVideo);
+  const previousVideos = videos;
+  if (editingVideoId) {
+    videos = videos.map(v => v.id === editingVideoId ? { ...v, ...data } : v);
+  } else {
+    videos = [...videos, { id: newId('video'), ...data }];
+  }
   status.textContent = 'Saving...';
   status.style.color = 'var(--text-muted)';
   button.disabled = true;
   try {
     await persistCatalog();
+    resetVideoForm();
     status.textContent = 'Saved.';
     status.style.color = 'var(--line)';
-    ['vTitle','vDesc','vUrl'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
     render();
   } catch (err) {
-    videos.pop();
-    status.textContent = "Couldn't save. Check the token and try again.";
+    videos = previousVideos;
+    status.textContent = await describeSaveError(err);
     status.style.color = 'var(--danger)';
   }
   button.disabled = false;
 });
 
 document.getElementById('videoAddCancel').addEventListener('click', () => {
+  resetVideoForm();
   document.getElementById('videoFormPanel').classList.add('hidden');
   document.getElementById('videoFormStatus').textContent = '';
 });
 
 loadCatalog();
 </script>
+
 </body>
 </html>
