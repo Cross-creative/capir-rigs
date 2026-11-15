@@ -342,14 +342,65 @@ html, body {
 
 .card:hover { border-color: var(--line-dim); }
 
-.video-thumb {
+.video-preview {
+  position: relative;
   width: calc(100% + 36px);
   margin: -18px -18px 0;
   aspect-ratio: 16 / 9;
-  object-fit: cover;
   border-radius: var(--radius) var(--radius) 0 0;
-  display: block;
+  overflow: hidden;
   background: var(--bg);
+}
+
+.video-preview img,
+.video-preview video,
+.video-preview iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
+  display: block;
+}
+
+.video-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: rgba(15, 20, 32, 0.25);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.play-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(15, 20, 32, 0.75);
+  border: 2px solid var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.play-icon::before {
+  content: '';
+  margin-left: 4px;
+  border-style: solid;
+  border-width: 9px 0 9px 15px;
+  border-color: transparent transparent transparent var(--text);
+}
+
+@media (hover: hover) {
+  .video-play:hover { background: rgba(15, 20, 32, 0.1); }
+  .video-play:hover .play-icon { transform: scale(1.1); }
 }
 
 .card-top {
@@ -845,8 +896,52 @@ function parseCatalog(data) {
 }
 
 function extractYouTubeId(url) {
-  const match = (url || '').match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/);
+  const match = (url || '').match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/);
   return match ? match[1] : null;
+}
+
+function isVideoFile(url) {
+  return ['.mp4', '.webm', '.ogg'].includes(fileExtension(url));
+}
+
+function buildVideoPreview(video) {
+  const box = document.createElement('div');
+  box.className = 'video-preview';
+  const youtubeId = extractYouTubeId(video.url);
+  if (youtubeId) {
+    const thumb = document.createElement('img');
+    thumb.src = 'https://img.youtube.com/vi/' + youtubeId + '/hqdefault.jpg';
+    thumb.alt = '';
+    thumb.loading = 'lazy';
+    box.appendChild(thumb);
+
+    const play = document.createElement('button');
+    play.className = 'video-play';
+    play.setAttribute('aria-label', 'Play ' + video.title);
+    const icon = document.createElement('span');
+    icon.className = 'play-icon';
+    play.appendChild(icon);
+    play.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = 'https://www.youtube-nocookie.com/embed/' + youtubeId + '?autoplay=1&rel=0';
+      frame.title = video.title;
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.allowFullscreen = true;
+      box.innerHTML = '';
+      box.appendChild(frame);
+    });
+    box.appendChild(play);
+    return box;
+  }
+  if (isVideoFile(video.url)) {
+    const player = document.createElement('video');
+    player.src = safeUrl(video.url);
+    player.controls = true;
+    player.preload = 'metadata';
+    box.appendChild(player);
+    return box;
+  }
+  return null;
 }
 
 function getDomain(url) {
@@ -1151,14 +1246,8 @@ function buildVideoCard(video) {
   const card = document.createElement('div');
   card.className = 'card';
 
-  const youtubeId = extractYouTubeId(video.url);
-  if (youtubeId) {
-    const thumb = document.createElement('img');
-    thumb.className = 'video-thumb';
-    thumb.src = 'https://img.youtube.com/vi/' + youtubeId + '/hqdefault.jpg';
-    thumb.alt = video.title;
-    card.appendChild(thumb);
-  }
+  const preview = buildVideoPreview(video);
+  if (preview) card.appendChild(preview);
 
   const name = document.createElement('h3');
   name.className = 'card-name';
