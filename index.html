@@ -58,7 +58,16 @@ html, body {
   height: 180px;
 }
 
-.hero-figure svg { width: 100%; height: 100%; }
+.hero-figure svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.hero-figure svg.dragging { cursor: grabbing; }
 
 .rig-line {
   fill: none;
@@ -439,17 +448,11 @@ footer {
 
   <div class="hero">
     <div class="hero-figure">
-      <svg viewBox="0 0 100 130" aria-hidden="true" focusable="false">
-        <path class="rig-line" d="M50 18 L50 70 M50 34 L28 54 M50 34 L72 54 M50 70 L32 112 M50 70 L68 112" style="animation-delay:0.1s"></path>
-        <circle class="rig-line" cx="50" cy="12" r="9" style="fill:none;stroke-dasharray:57;stroke-dashoffset:57;animation-delay:0s"></circle>
-        <circle class="rig-joint" cx="50" cy="18" r="3" style="animation-delay:0.3s"></circle>
-        <circle class="rig-joint" cx="50" cy="34" r="3" style="animation-delay:0.55s"></circle>
-        <circle class="rig-joint" cx="28" cy="54" r="3" style="animation-delay:0.8s"></circle>
-        <circle class="rig-joint" cx="72" cy="54" r="3" style="animation-delay:0.8s"></circle>
-        <circle class="rig-joint" cx="50" cy="70" r="3" style="animation-delay:1.0s"></circle>
-        <circle class="rig-joint" cx="32" cy="112" r="3" style="animation-delay:1.25s"></circle>
-        <circle class="rig-joint" cx="68" cy="112" r="3" style="animation-delay:1.25s"></circle>
-      </svg>
+<svg id="rigSvg" viewBox="0 0 100 130" aria-hidden="true" focusable="false">
+  <g id="rigBones"></g>
+  <circle id="rigHead" class="rig-line" cx="50" cy="12" r="9" style="fill:none;stroke-dasharray:57;stroke-dashoffset:57;animation-delay:0s"></circle>
+  <g id="rigJoints"></g>
+</svg>
     </div>
     <div class="hero-text">
       <h1>Rig Catalog</h1>
@@ -1193,6 +1196,199 @@ document.getElementById('videoAddCancel').addEventListener('click', () => {
   document.getElementById('videoFormPanel').classList.add('hidden');
   document.getElementById('videoFormStatus').textContent = '';
 });
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const rigSvg = document.getElementById('rigSvg');
+const rigBonesEl = document.getElementById('rigBones');
+const rigJointsEl = document.getElementById('rigJoints');
+const rigHeadEl = document.getElementById('rigHead');
+
+const RIG_STIFF = 0.05;
+const RIG_BONE = 0.3;
+const RIG_DAMP = 0.92;
+const RIG_STEP = 1000 / 60;
+
+const rigRest = {
+  neck: [50, 18, 0.3],
+  shoulder: [50, 34, 0.55],
+  lhand: [28, 54, 0.8],
+  rhand: [72, 54, 0.8],
+  hip: [50, 70, 1.0],
+  lfoot: [32, 112, 1.25],
+  rfoot: [68, 112, 1.25]
+};
+
+const rigLinks = [
+  ['neck', 'shoulder'],
+  ['shoulder', 'hip'],
+  ['shoulder', 'lhand'],
+  ['shoulder', 'rhand'],
+  ['hip', 'lfoot'],
+  ['hip', 'rfoot']
+];
+
+const rigNodes = {};
+Object.keys(rigRest).forEach(name => {
+  const [x, y, delay] = rigRest[name];
+  const el = document.createElementNS(SVG_NS, 'circle');
+  el.setAttribute('class', 'rig-joint');
+  el.setAttribute('r', '3');
+  el.style.animationDelay = delay + 's';
+  rigJointsEl.appendChild(el);
+  rigNodes[name] = { x, y, rx: x, ry: y, vx: 0, vy: 0, el };
+});
+
+const rigBones = rigLinks.map(([a, b]) => {
+  const el = document.createElementNS(SVG_NS, 'line');
+  el.setAttribute('class', 'rig-line');
+  el.style.animationDelay = '0.1s';
+  rigBonesEl.appendChild(el);
+  const A = rigNodes[a];
+  const B = rigNodes[b];
+  return { a, b, len: Math.hypot(B.x - A.x, B.y - A.y), el };
+});
+
+let rigGrabbed = null;
+let rigPointer = null;
+const rigOffset = { x: 0, y: 0 };
+
+function rigPoint(e) {
+  const pt = rigSvg.createSVGPoint();
+  pt.x = e.clientX;
+  pt.y = e.clientY;
+  return pt.matrixTransform(rigSvg.getScreenCTM().inverse());
+}
+
+function stepRig() {
+  const names = Object.keys(rigNodes);
+  names.forEach(n => {
+    if (n === rigGrabbed) return;
+    const p = rigNodes[n];
+    p.vx += (p.rx - p.x) * RIG_STIFF;
+    p.vy += (p.ry - p.y) * RIG_STIFF;
+  });
+  rigBones.forEach(bone => {
+    const A = rigNodes[bone.a];
+    const B = rigNodes[bone.b];
+    const dx = B.x - A.x;
+    const dy = B.y - A.y;
+    const d = Math.hypot(dx, dy) || 0.001;
+    const k = (d - bone.len) / d * RIG_BONE;
+    if (bone.a !== rigGrabbed) {
+      A.vx += dx * k;
+      A.vy += dy * k;
+    }
+    if (bone.b !== rigGrabbed) {
+      B.vx -= dx * k;
+      B.vy -= dy * k;
+    }
+  });
+  names.forEach(n => {
+    const p = rigNodes[n];
+    if (n === rigGrabbed) {
+      p.vx *= 0.8;
+      p.vy *= 0.8;
+      return;
+    }
+    p.vx *= RIG_DAMP;
+    p.vy *= RIG_DAMP;
+    p.x += p.vx;
+    p.y += p.vy;
+  });
+}
+
+function drawRig() {
+  rigBones.forEach(bone => {
+    const A = rigNodes[bone.a];
+    const B = rigNodes[bone.b];
+    bone.el.setAttribute('x1', A.x);
+    bone.el.setAttribute('y1', A.y);
+    bone.el.setAttribute('x2', B.x);
+    bone.el.setAttribute('y2', B.y);
+  });
+  Object.values(rigNodes).forEach(p => {
+    p.el.setAttribute('cx', p.x);
+    p.el.setAttribute('cy', p.y);
+  });
+  rigHeadEl.setAttribute('cx', rigNodes.neck.x);
+  rigHeadEl.setAttribute('cy', rigNodes.neck.y - 6);
+}
+
+let rigLast = 0;
+let rigAcc = 0;
+
+function rigLoop(t) {
+  if (!rigLast) rigLast = t;
+  rigAcc += Math.min(t - rigLast, 50);
+  rigLast = t;
+  while (rigAcc >= RIG_STEP) {
+    stepRig();
+    rigAcc -= RIG_STEP;
+  }
+  drawRig();
+  requestAnimationFrame(rigLoop);
+}
+
+rigSvg.addEventListener('pointerdown', e => {
+  const pt = rigPoint(e);
+  let best = null;
+  let bestDist = 18;
+  Object.keys(rigNodes).forEach(n => {
+    const d = Math.hypot(rigNodes[n].x - pt.x, rigNodes[n].y - pt.y);
+    if (d < bestDist) {
+      best = n;
+      bestDist = d;
+    }
+  });
+  const headDist = Math.hypot(rigNodes.neck.x - pt.x, rigNodes.neck.y - 6 - pt.y);
+  if (headDist < 11 && headDist < bestDist) best = 'neck';
+  if (!best) return;
+  rigGrabbed = best;
+  rigOffset.x = rigNodes[best].x - pt.x;
+  rigOffset.y = rigNodes[best].y - pt.y;
+  rigSvg.setPointerCapture(e.pointerId);
+  rigSvg.classList.add('dragging');
+  e.preventDefault();
+});
+
+rigSvg.addEventListener('pointermove', e => {
+  const pt = rigPoint(e);
+  if (rigGrabbed) {
+    const p = rigNodes[rigGrabbed];
+    const nx = pt.x + rigOffset.x;
+    const ny = pt.y + rigOffset.y;
+    p.vx = (nx - p.x) * 0.6;
+    p.vy = (ny - p.y) * 0.6;
+    p.x = nx;
+    p.y = ny;
+  } else if (rigPointer) {
+    const dx = pt.x - rigPointer.x;
+    const dy = pt.y - rigPointer.y;
+    Object.values(rigNodes).forEach(p => {
+      if (Math.hypot(p.x - pt.x, p.y - pt.y) < 14) {
+        p.vx += dx * 0.12;
+        p.vy += dy * 0.12;
+      }
+    });
+  }
+  rigPointer = { x: pt.x, y: pt.y };
+});
+
+rigSvg.addEventListener('pointerleave', () => {
+  rigPointer = null;
+});
+
+function releaseRig(e) {
+  if (!rigGrabbed) return;
+  rigGrabbed = null;
+  rigSvg.classList.remove('dragging');
+  if (rigSvg.hasPointerCapture(e.pointerId)) rigSvg.releasePointerCapture(e.pointerId);
+}
+
+rigSvg.addEventListener('pointerup', releaseRig);
+rigSvg.addEventListener('pointercancel', releaseRig);
+
+requestAnimationFrame(rigLoop);
 
 loadCatalog();
 </script>
