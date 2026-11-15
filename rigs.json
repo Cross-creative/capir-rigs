@@ -82,6 +82,16 @@
       "size": "32.8 KB",
       "description": "Moon Animator Cam",
       "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/MoonAnimatorCamREMADE.rbxm"
+    },
+    {
+      "id": "rig-0f6c0eef-ea45-4e32-a7c3-9f10e37748ab",
+      "name": "Xray Skeleton",
+      "section": "resources",
+      "kind": "Resource",
+      "format": "rbxm",
+      "size": "50.7 KB",
+      "description": "Roblox Skeleton Xray",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/MK.xray.skeleton.rbxm"
     }
   ],
   "videos": [
