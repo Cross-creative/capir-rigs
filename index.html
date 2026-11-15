@@ -208,8 +208,7 @@ html, body {
 }
 
 .admin-toggle:hover {
-  border-color: var(--amber);
-  color: var(--amber);
+  color: #FFFFFF;
 }
 
 .global-status {
@@ -436,6 +435,128 @@ html, body {
   text-align: center;
   padding: 60px 20px;
   color: var(--text-muted);
+}
+
+.tab-btn,
+.filter-btn,
+.admin-toggle,
+.btn,
+.download-btn,
+.edit-btn,
+.delete-btn {
+  transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.card {
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input,
+.field input,
+.field textarea,
+.field select,
+.admin-gate input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus,
+.field input:focus,
+.field textarea:focus,
+.field select:focus,
+.admin-gate input:focus {
+  box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.15);
+}
+
+.panel { animation: panelIn 0.25s ease; }
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (hover: hover) {
+  .tab-btn:hover,
+  .filter-btn:hover,
+  .admin-toggle:hover,
+  .btn:hover:not(:disabled),
+  .download-btn:hover,
+  .edit-btn:hover,
+  .delete-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .tab-btn:not(.active):hover,
+  .filter-btn:not(.active):hover {
+    color: var(--text);
+  }
+
+  .tab-btn.active:hover,
+  .filter-btn.active:hover,
+  .delete-btn:hover {
+    filter: brightness(1.3);
+  }
+
+  .admin-toggle:hover,
+  .edit-btn:hover,
+  .btn.secondary:hover:not(:disabled) {
+    color: #FFFFFF;
+  }
+
+  .btn:hover:not(:disabled),
+  .download-btn:hover {
+    filter: brightness(1.1);
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  }
+}
+
+.tab-btn:active,
+.filter-btn:active,
+.admin-toggle:active,
+.btn:active:not(:disabled),
+.download-btn:active,
+.edit-btn:active,
+.delete-btn:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: none;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-btn,
+  .filter-btn,
+  .admin-toggle,
+  .btn,
+  .download-btn,
+  .edit-btn,
+  .delete-btn,
+  .card {
+    transition: none;
+  }
+
+  .tab-btn:hover,
+  .filter-btn:hover,
+  .admin-toggle:hover,
+  .btn:hover,
+  .download-btn:hover,
+  .edit-btn:hover,
+  .delete-btn:hover,
+  .card:hover,
+  .tab-btn:active,
+  .filter-btn:active,
+  .admin-toggle:active,
+  .btn:active,
+  .download-btn:active,
+  .edit-btn:active,
+  .delete-btn:active {
+    transform: none !important;
+  }
+
+  .panel { animation: none; }
 }
 
 button:focus-visible,
