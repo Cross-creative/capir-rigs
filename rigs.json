@@ -182,6 +182,16 @@
       "size": "1.23 MB",
       "description": "Very simple rig. By Egor (i think)",
       "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/conehead.blend"
+    },
+    {
+      "id": "rig-00df5aef-f94f-46eb-9a13-09af8be9ac7c",
+      "name": "Double Egor Rigs V5",
+      "section": "rigs",
+      "kind": "R6",
+      "format": ".blend",
+      "size": "3.96 MB",
+      "description": "Double Rigs. By Egor.",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/DOUBLE_EGOR_RIGS_V5.blend"
     }
   ],
   "videos": [
