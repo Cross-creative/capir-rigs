@@ -162,6 +162,16 @@
       "size": "",
       "description": "Blender like rotation, it has a Plus Version as well. By PunIsIntendeds.\n\nWork on Moon Animator.",
       "url": "https://create.roblox.com/store/asset/100363609556853/Phobos-Rotation"
+    },
+    {
+      "id": "rig-d9dd161d-f184-4f53-a91b-19e326038687",
+      "name": "THE EGOR rig",
+      "section": "rigs",
+      "kind": "R6",
+      "format": ".blend",
+      "size": "5.53 MB",
+      "description": "The rig that Egor uses, that's it. Created by Egor.",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/THE.EGOR.blend"
     }
   ],
   "videos": [
