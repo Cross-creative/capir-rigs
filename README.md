@@ -21,6 +21,7 @@ Animator Bench is a static website (a single HTML file) that works as a catalog 
 - Automatic file size and format detection for GitHub Releases links.
 - Video previews for YouTube links and direct .mp4, .webm and .ogg files.
 - Interactive stick figure in the header (drag it like jelly).
+- Language switch (English / Portuguese) with automatic detection, and optional texts in both languages for every item.
 - Responsive layout, keyboard focus styles and reduced-motion support.
 
 ### Files
@@ -29,7 +30,7 @@ Animator Bench is a static website (a single HTML file) that works as a catalog 
 - icon.gif and icon.png: site icon (animated and static).
 - favicon.png: browser tab icon.
 - rigs.json: the catalog data, created automatically on the first save from the Creator area.
-- LICENSE: GNU GPL v3.
+- LICENSE: GNU AGPL v3.
 - README.md and README.txt: this file.
 
 ### Setup
@@ -45,7 +46,7 @@ The token is only kept in memory while the page is open. It is never stored or w
 
 ### Data format
 
-rigs.json holds two lists. The "section" field of an item can be rigs, resources or plugins. Items without it are treated as rigs.
+rigs.json holds two lists. The "section" field of an item can be rigs, resources or plugins. Items without it are treated as rigs. Texts can be written in both languages with namePt, descriptionPt and titlePt; the site shows the other language when one is empty.
 
 ```json
 {
@@ -54,10 +55,12 @@ rigs.json holds two lists. The "section" field of an item can be rigs, resources
       "id": "rig-1",
       "section": "rigs",
       "name": "BetterR6",
+      "namePt": "BetterR6",
       "kind": "R6",
       "format": ".blend",
       "size": "1.87 MB",
       "description": "Short description.",
+      "descriptionPt": "Descrição curta.",
       "url": "https://github.com/OWNER/REPO/releases/download/Rig/file.blend"
     }
   ],
@@ -65,7 +68,9 @@ rigs.json holds two lists. The "section" field of an item can be rigs, resources
     {
       "id": "video-1",
       "title": "Rig setup walkthrough",
+      "titlePt": "Tutorial de configuração do rig",
       "description": "Short description.",
+      "descriptionPt": "Descrição curta.",
       "url": "https://www.youtube.com/watch?v=VIDEO_ID"
     }
   ]
@@ -78,7 +83,9 @@ The license below covers the source code of the site only. Rigs, resources, plug
 
 ### License
 
-Copyright (C) 2026 Cross Creative & Capis. This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License, version 3, as published by the Free Software Foundation. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the LICENSE file for the full text.
+Copyright (C) 2026 Cross Creative & Capis. This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License, version 3, as published by the Free Software Foundation. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the LICENSE file for the full text.
+
+Because this is the AGPL, if you modify the site and host it for other people, you must offer your visitors the source code of your version. The icon in the header links to the repository set in GITHUB_OWNER and GITHUB_REPO, so point those to your own repository.
 
 ---
 
@@ -99,6 +106,7 @@ O Animator Bench é um site estático (um único arquivo HTML) que funciona como
 - Detecção automática de tamanho e formato para links do GitHub Releases.
 - Prévia de vídeo para links do YouTube e arquivos .mp4, .webm e .ogg diretos.
 - Boneco interativo no topo da página (arraste como se fosse gelatina).
+- Seletor de idioma (inglês / português) com detecção automática e textos opcionais nos dois idiomas em cada item.
 - Layout responsivo, foco visível no teclado e suporte a movimento reduzido.
 
 ### Arquivos
@@ -107,7 +115,7 @@ O Animator Bench é um site estático (um único arquivo HTML) que funciona como
 - icon.gif e icon.png: ícone do site (animado e estático).
 - favicon.png: ícone da aba do navegador.
 - rigs.json: os dados do catálogo, criado automaticamente no primeiro salvamento pela área do criador.
-- LICENSE: GNU GPL v3.
+- LICENSE: GNU AGPL v3.
 - README.md e README.txt: este arquivo.
 
 ### Instalação
@@ -123,7 +131,7 @@ O token fica só na memória enquanto a página está aberta. Ele nunca é guard
 
 ### Formato dos dados
 
-O rigs.json tem duas listas. O campo "section" de um item pode ser rigs, resources ou plugins. Itens sem ele são tratados como rigs.
+O rigs.json tem duas listas. O campo "section" de um item pode ser rigs, resources ou plugins. Itens sem ele são tratados como rigs. Os textos podem ter versão em português com namePt, descriptionPt e titlePt; o site mostra o outro idioma quando um deles estiver vazio.
 
 ```json
 {
@@ -132,10 +140,12 @@ O rigs.json tem duas listas. O campo "section" de um item pode ser rigs, resourc
       "id": "rig-1",
       "section": "rigs",
       "name": "BetterR6",
+      "namePt": "BetterR6",
       "kind": "R6",
       "format": ".blend",
       "size": "1.87 MB",
       "description": "Short description.",
+      "descriptionPt": "Descrição curta.",
       "url": "https://github.com/OWNER/REPO/releases/download/Rig/file.blend"
     }
   ],
@@ -143,7 +153,9 @@ O rigs.json tem duas listas. O campo "section" de um item pode ser rigs, resourc
     {
       "id": "video-1",
       "title": "Rig setup walkthrough",
+      "titlePt": "Tutorial de configuração do rig",
       "description": "Short description.",
+      "descriptionPt": "Descrição curta.",
       "url": "https://www.youtube.com/watch?v=VIDEO_ID"
     }
   ]
@@ -156,4 +168,6 @@ A licença abaixo cobre somente o código-fonte do site. Rigs, recursos, plugins
 
 ### Licença
 
-Copyright (C) 2026 Cross Creative & Capis. Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo sob os termos da GNU General Public License, versão 3, publicada pela Free Software Foundation. Ele é distribuído na esperança de que seja útil, mas SEM NENHUMA GARANTIA; sem sequer a garantia implícita de COMERCIALIZAÇÃO ou ADEQUAÇÃO A UM PROPÓSITO ESPECÍFICO. Veja o arquivo LICENSE para o texto completo.
+Copyright (C) 2026 Cross Creative & Capis. Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo sob os termos da GNU Affero General Public License, versão 3, publicada pela Free Software Foundation. Ele é distribuído na esperança de que seja útil, mas SEM NENHUMA GARANTIA; sem sequer a garantia implícita de COMERCIALIZAÇÃO ou ADEQUAÇÃO A UM PROPÓSITO ESPECÍFICO. Veja o arquivo LICENSE para o texto completo.
+
+Como a licença é a AGPL, se você modificar o site e hospedá-lo para outras pessoas, precisa oferecer o código-fonte da sua versão aos visitantes. O ícone do topo leva ao repositório definido em GITHUB_OWNER e GITHUB_REPO, então aponte essas constantes para o seu próprio repositório.
