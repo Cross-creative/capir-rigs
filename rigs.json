@@ -152,6 +152,16 @@
       "size": "",
       "description": "RBX_Monkey Blender Addon. Created by CAUTIONED",
       "url": "https://github.com/Cautioned/Blender-Animations-Plugin?tab=readme-ov-file"
+    },
+    {
+      "id": "rig-e7a7456d-06c7-4e70-b745-3c824b91f318",
+      "name": "Phobos Rotation",
+      "section": "plugins",
+      "kind": "Roblox Plugin",
+      "format": "",
+      "size": "",
+      "description": "Blender like rotation, it has a Plus Version as well. By PunIsIntendeds.\n\nWork on Moon Animator.",
+      "url": "https://create.roblox.com/store/asset/100363609556853/Phobos-Rotation"
     }
   ],
   "videos": [
