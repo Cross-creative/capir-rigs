@@ -172,6 +172,16 @@
       "size": "5.53 MB",
       "description": "The rig that Egor uses, that's it. Created by Egor.",
       "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/THE.EGOR.blend"
+    },
+    {
+      "id": "rig-54ab7676-0c30-461f-bb56-61e3134f361e",
+      "name": "Cone Head",
+      "section": "rigs",
+      "kind": "R6",
+      "format": ".blend",
+      "size": "1.23 MB",
+      "description": "Very simple rig. By Egor (i think)",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/conehead.blend"
     }
   ],
   "videos": [
