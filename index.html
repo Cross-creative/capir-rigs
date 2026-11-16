@@ -97,6 +97,7 @@ html, body {
 
 .brand {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 14px;
   margin-bottom: 12px;
@@ -123,6 +124,31 @@ html, body {
   line-height: 1.6;
   margin: 0;
   max-width: 46ch;
+}
+
+.lang-switch {
+  display: inline-flex;
+  margin-left: 6px;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 11px;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.lang-btn[aria-pressed="true"] {
+  color: var(--amber);
+  background: rgba(242, 169, 59, 0.12);
 }
 
 .section-tabs {
@@ -205,10 +231,6 @@ html, body {
   padding: 9px 14px;
   border-radius: var(--radius);
   cursor: pointer;
-}
-
-.admin-toggle:hover {
-  color: #FFFFFF;
 }
 
 .global-status {
@@ -398,11 +420,6 @@ html, body {
   border-color: transparent transparent transparent var(--text);
 }
 
-@media (hover: hover) {
-  .video-play:hover { background: rgba(15, 20, 32, 0.1); }
-  .video-play:hover .play-icon { transform: scale(1.1); }
-}
-
 .card-top {
   display: flex;
   justify-content: space-between;
@@ -526,6 +543,13 @@ html, body {
   to { opacity: 1; transform: none; }
 }
 
+.brand-link {
+  display: flex;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  transition: transform 0.15s ease, filter 0.2s ease;
+}
+
 @media (hover: hover) {
   .tab-btn:hover,
   .filter-btn:hover,
@@ -563,6 +587,16 @@ html, body {
     transform: translateY(-4px);
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
   }
+
+  .brand-link:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+  }
+
+  .lang-btn[aria-pressed="false"]:hover { color: var(--text); }
+
+  .video-play:hover { background: rgba(15, 20, 32, 0.1); }
+  .video-play:hover .play-icon { transform: scale(1.1); }
 }
 
 .tab-btn:active,
@@ -577,6 +611,8 @@ html, body {
   filter: none;
 }
 
+.brand-link:active { transform: scale(0.96); }
+
 @media (prefers-reduced-motion: reduce) {
   .tab-btn,
   .filter-btn,
@@ -585,7 +621,9 @@ html, body {
   .download-btn,
   .edit-btn,
   .delete-btn,
-  .card {
+  .card,
+  .brand-link,
+  .lang-btn {
     transition: none;
   }
 
@@ -597,13 +635,15 @@ html, body {
   .edit-btn:hover,
   .delete-btn:hover,
   .card:hover,
+  .brand-link:hover,
   .tab-btn:active,
   .filter-btn:active,
   .admin-toggle:active,
   .btn:active,
   .download-btn:active,
   .edit-btn:active,
-  .delete-btn:active {
+  .delete-btn:active,
+  .brand-link:active {
     transform: none !important;
   }
 
@@ -647,90 +687,104 @@ footer {
     </div>
     <div class="hero-text">
       <div class="brand">
-        <img class="brand-icon" src="icon.gif" alt="" width="64" height="64">
+        <a class="brand-link" id="repoLink" href="#" target="_blank" rel="noopener noreferrer" data-i18n-title="repo_link" data-i18n-aria="repo_link" title="View the source on GitHub" aria-label="View the source on GitHub">
+          <img class="brand-icon" src="icon.gif" alt="" width="64" height="64">
+        </a>
         <h1>Animator Bench</h1>
+        <div class="lang-switch" role="group" aria-label="Language / Idioma">
+          <button class="lang-btn" id="langEn" type="button" data-lang="en" aria-pressed="true">EN</button>
+          <button class="lang-btn" id="langPt" type="button" data-lang="pt" aria-pressed="false">PT</button>
+        </div>
       </div>
-      <p>Rigs, resources, plugins and videos for animators. Pick an item below to open or download it.</p>
+      <p data-i18n="hero_text">Rigs, resources, plugins and videos for animators. Pick an item below to open or download it.</p>
     </div>
   </div>
 
   <div class="section-tabs" role="tablist">
-    <button class="tab-btn active" id="tabRigs" data-section="rigs" role="tab" aria-selected="true">Rigs</button>
-    <button class="tab-btn" id="tabResources" data-section="resources" role="tab" aria-selected="false">Resources</button>
-    <button class="tab-btn" id="tabPlugins" data-section="plugins" role="tab" aria-selected="false">Plugins/Programs</button>
-    <button class="tab-btn" id="tabVideos" data-section="videos" role="tab" aria-selected="false">Videos</button>
+    <button class="tab-btn active" id="tabRigs" data-section="rigs" role="tab" aria-selected="true" data-i18n="tab_rigs">Rigs</button>
+    <button class="tab-btn" id="tabResources" data-section="resources" role="tab" aria-selected="false" data-i18n="tab_resources">Resources</button>
+    <button class="tab-btn" id="tabPlugins" data-section="plugins" role="tab" aria-selected="false" data-i18n="tab_plugins">Plugins/Programs</button>
+    <button class="tab-btn" id="tabVideos" data-section="videos" role="tab" aria-selected="false" data-i18n="tab_videos">Videos</button>
   </div>
 
   <div class="toolbar">
     <input type="text" class="search-input" id="searchInput" placeholder="Search by name or description...">
     <div class="filters" id="filterButtons"></div>
-    <button class="admin-toggle" id="adminToggle">Creator area</button>
+    <button class="admin-toggle" id="adminToggle" data-i18n="creator_area">Creator area</button>
   </div>
 
   <p class="global-status" id="globalStatus" role="status" aria-live="polite"></p>
 
   <div class="panel hidden" id="configBanner">
-    <h2>Setup needed</h2>
-    <p>Set GITHUB_OWNER and GITHUB_REPO at the top of the &lt;script&gt; to your repository before publishing this site. Until then, the catalog only shows example items.</p>
+    <h2 data-i18n="setup_title">Setup needed</h2>
+    <p data-i18n="setup_text">Set GITHUB_OWNER and GITHUB_REPO at the top of the script to your repository before publishing this site. Until then, the catalog only shows example items.</p>
   </div>
 
   <div class="panel hidden" id="gatePanel">
-    <h2>Sign in as creator</h2>
+    <h2 data-i18n="gate_title">Sign in as creator</h2>
     <div class="admin-gate">
-      <input type="password" id="gateInput" placeholder="GitHub access token">
-      <button class="btn" id="gateSubmit">Sign in</button>
+      <input type="password" id="gateInput" data-i18n-placeholder="gate_token" placeholder="GitHub access token">
+      <button class="btn" id="gateSubmit" data-i18n="sign_in">Sign in</button>
     </div>
-    <p class="gate-hint">The token needs read and write access to "Contents" on this repository only.</p>
-    <p class="gate-error" id="gateError">Couldn't validate. Check the token and the GITHUB_OWNER/GITHUB_REPO constants in the code.</p>
+    <p class="gate-hint" data-i18n="gate_hint">The token needs read and write access to "Contents" on this repository only.</p>
+    <p class="gate-error" id="gateError" data-i18n="gate_error">Couldn't validate. Check the token and the GITHUB_OWNER/GITHUB_REPO constants in the code.</p>
   </div>
 
   <div class="panel hidden" id="rigFormPanel">
     <h2 id="rigFormTitle">Add new item</h2>
     <div class="field-row">
-      <div class="field full">
-        <label for="fSection">Section</label>
+      <div class="field">
+        <label for="fSection" data-i18n="label_section">Section</label>
         <select id="fSection">
-          <option value="rigs">Rigs</option>
-          <option value="resources">Resources</option>
-          <option value="plugins">Plugins/Programs</option>
+          <option value="rigs" data-i18n="tab_rigs">Rigs</option>
+          <option value="resources" data-i18n="tab_resources">Resources</option>
+          <option value="plugins" data-i18n="tab_plugins">Plugins/Programs</option>
         </select>
       </div>
-    </div>
-    <div class="field-row">
       <div class="field">
-        <label for="fName">Name</label>
-        <input type="text" id="fName" placeholder="e.g. R15 Ninja Rig">
-      </div>
-      <div class="field">
-        <label for="fKind">Category</label>
-        <input type="text" id="fKind" placeholder="e.g. R15, R6, Accessory...">
+        <label for="fKind" data-i18n="label_category">Category</label>
+        <input type="text" id="fKind" data-i18n-placeholder="ph_kind" placeholder="e.g. R15, R6, Accessory...">
       </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label for="fFormat">Format</label>
-        <input type="text" id="fFormat" placeholder="Auto-detected from the link">
+        <label for="fName" data-i18n="label_name_en">Name (English)</label>
+        <input type="text" id="fName" placeholder="R15 Ninja Rig">
       </div>
       <div class="field">
-        <label for="fSize">Size</label>
-        <input type="text" id="fSize" placeholder="Auto-detected when possible">
+        <label for="fNamePt" data-i18n="label_name_pt">Name (Portuguese)</label>
+        <input type="text" id="fNamePt" placeholder="Rig Ninja R15">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fFormat" data-i18n="label_format">Format</label>
+        <input type="text" id="fFormat" data-i18n-placeholder="ph_format" placeholder="Auto-detected from the link">
+      </div>
+      <div class="field">
+        <label for="fSize" data-i18n="label_size">Size</label>
+        <input type="text" id="fSize" data-i18n-placeholder="ph_size" placeholder="Auto-detected when possible">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fDesc" data-i18n="label_desc_en">Description (English)</label>
+        <textarea id="fDesc" data-i18n-placeholder="ph_desc_item" placeholder="A short sentence about the item"></textarea>
+      </div>
+      <div class="field">
+        <label for="fDescPt" data-i18n="label_desc_pt">Description (Portuguese)</label>
+        <textarea id="fDescPt" data-i18n-placeholder="ph_desc_item" placeholder="A short sentence about the item"></textarea>
       </div>
     </div>
     <div class="field-row">
       <div class="field full">
-        <label for="fDesc">Description</label>
-        <textarea id="fDesc" placeholder="A short sentence about the item"></textarea>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field full">
-        <label for="fUrl">Link</label>
-        <input type="text" id="fUrl" placeholder="GitHub Releases, Drive, Roblox Marketplace, etc.">
+        <label for="fUrl" data-i18n="label_link">Link</label>
+        <input type="text" id="fUrl" data-i18n-placeholder="ph_link" placeholder="GitHub Releases, Drive, Roblox Marketplace, etc.">
       </div>
     </div>
     <div class="form-actions">
       <button class="btn" id="rigAddSubmit">Add</button>
-      <button class="btn secondary" id="rigAddCancel">Cancel</button>
+      <button class="btn secondary" id="rigAddCancel" data-i18n="cancel">Cancel</button>
       <p class="form-status" id="rigFormStatus"></p>
     </div>
   </div>
@@ -738,35 +792,41 @@ footer {
   <div class="panel hidden" id="videoFormPanel">
     <h2 id="videoFormTitle">Add new video</h2>
     <div class="field-row">
-      <div class="field full">
-        <label for="vTitle">Title</label>
-        <input type="text" id="vTitle" placeholder="e.g. Rig setup walkthrough">
+      <div class="field">
+        <label for="vTitle" data-i18n="label_title_en">Title (English)</label>
+        <input type="text" id="vTitle" placeholder="Rig setup walkthrough">
+      </div>
+      <div class="field">
+        <label for="vTitlePt" data-i18n="label_title_pt">Title (Portuguese)</label>
+        <input type="text" id="vTitlePt" placeholder="Tutorial de configuração do rig">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="vDesc" data-i18n="label_desc_en">Description (English)</label>
+        <textarea id="vDesc" data-i18n-placeholder="ph_desc_video" placeholder="A short sentence about the video"></textarea>
+      </div>
+      <div class="field">
+        <label for="vDescPt" data-i18n="label_desc_pt">Description (Portuguese)</label>
+        <textarea id="vDescPt" data-i18n-placeholder="ph_desc_video" placeholder="A short sentence about the video"></textarea>
       </div>
     </div>
     <div class="field-row">
       <div class="field full">
-        <label for="vDesc">Description</label>
-        <textarea id="vDesc" placeholder="A short sentence about the video"></textarea>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field full">
-        <label for="vUrl">Video link</label>
-        <input type="text" id="vUrl" placeholder="YouTube link, etc.">
+        <label for="vUrl" data-i18n="label_video_link">Video link</label>
+        <input type="text" id="vUrl" data-i18n-placeholder="ph_video_link" placeholder="YouTube link, etc.">
       </div>
     </div>
     <div class="form-actions">
       <button class="btn" id="videoAddSubmit">Add</button>
-      <button class="btn secondary" id="videoAddCancel">Cancel</button>
+      <button class="btn secondary" id="videoAddCancel" data-i18n="cancel">Cancel</button>
       <p class="form-status" id="videoFormStatus"></p>
     </div>
   </div>
 
   <main class="grid" id="grid"></main>
 
-  <footer>
-    By Capis
-  </footer>
+  <footer data-i18n="footer">By Capis</footer>
 
 </div>
 
@@ -781,7 +841,150 @@ const API_URL = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_RE
 const isConfigured = GITHUB_OWNER !== 'your-username' && GITHUB_REPO !== 'your-repository';
 
 const FILE_SECTIONS = ['rigs', 'resources', 'plugins'];
+const LANG_KEY = 'animator-bench-lang';
 
+const STRINGS = {
+  en: {
+    hero_text: 'Rigs, resources, plugins and videos for animators. Pick an item below to open or download it.',
+    repo_link: 'View the source on GitHub',
+    tab_rigs: 'Rigs',
+    tab_resources: 'Resources',
+    tab_plugins: 'Plugins/Programs',
+    tab_videos: 'Videos',
+    search_items: 'Search by name or description...',
+    search_videos: 'Search by title or description...',
+    all: 'All',
+    creator_area: 'Creator area',
+    setup_title: 'Setup needed',
+    setup_text: 'Set GITHUB_OWNER and GITHUB_REPO at the top of the script to your repository before publishing this site. Until then, the catalog only shows example items.',
+    gate_title: 'Sign in as creator',
+    gate_token: 'GitHub access token',
+    sign_in: 'Sign in',
+    checking_short: 'Checking...',
+    gate_hint: 'The token needs read and write access to "Contents" on this repository only.',
+    gate_error: "Couldn't validate. Check the token and the GITHUB_OWNER/GITHUB_REPO constants in the code.",
+    form_add_item: 'Add new item',
+    form_edit_item: 'Edit item',
+    form_add_video: 'Add new video',
+    form_edit_video: 'Edit video',
+    label_section: 'Section',
+    label_category: 'Category',
+    label_name_en: 'Name (English)',
+    label_name_pt: 'Name (Portuguese)',
+    label_format: 'Format',
+    label_size: 'Size',
+    label_desc_en: 'Description (English)',
+    label_desc_pt: 'Description (Portuguese)',
+    label_link: 'Link',
+    label_title_en: 'Title (English)',
+    label_title_pt: 'Title (Portuguese)',
+    label_video_link: 'Video link',
+    ph_kind: 'e.g. R15, R6, Accessory...',
+    ph_format: 'Auto-detected from the link',
+    ph_size: 'Auto-detected when possible',
+    ph_desc_item: 'A short sentence about the item',
+    ph_desc_video: 'A short sentence about the video',
+    ph_link: 'GitHub Releases, Drive, Roblox Marketplace, etc.',
+    ph_video_link: 'YouTube link, etc.',
+    add: 'Add',
+    cancel: 'Cancel',
+    save_changes: 'Save changes',
+    download: 'Download',
+    view: 'View',
+    watch: 'Watch',
+    edit: 'Edit',
+    remove: 'Remove',
+    play: 'Play',
+    empty: 'No items found.',
+    confirm_remove: 'Remove this item?',
+    removed: 'Removed.',
+    saving: 'Saving...',
+    saved: 'Saved.',
+    err_fill_item: 'Fill in at least a name and the link.',
+    err_fill_video: 'Fill in at least a title and the link.',
+    err_url: 'The link must start with http:// or https://.',
+    err_conflict: 'The catalog was changed elsewhere. Latest version loaded, please try again.',
+    err_save: "Couldn't save. Check the token and try again.",
+    detecting: 'Detecting file info...',
+    checking: 'Checking link...',
+    roblox_detected: 'Roblox link detected. The button will say "View".',
+    no_file: 'No file detected. The button will say "View".',
+    size_detected: 'Size detected: ',
+    size_failed: "Couldn't detect the size automatically.",
+    footer: 'By Capis'
+  },
+  pt: {
+    hero_text: 'Rigs, recursos, plugins e vídeos para animadores. Escolha um item abaixo para abrir ou baixar.',
+    repo_link: 'Ver o código-fonte no GitHub',
+    tab_rigs: 'Rigs',
+    tab_resources: 'Recursos',
+    tab_plugins: 'Plugins/Programas',
+    tab_videos: 'Vídeos',
+    search_items: 'Buscar por nome ou descrição...',
+    search_videos: 'Buscar por título ou descrição...',
+    all: 'Todos',
+    creator_area: 'Área do criador',
+    setup_title: 'Configuração necessária',
+    setup_text: 'Defina GITHUB_OWNER e GITHUB_REPO no topo do script com o seu repositório antes de publicar o site. Até lá, o catálogo mostra apenas itens de exemplo.',
+    gate_title: 'Entrar como criador',
+    gate_token: 'Token de acesso do GitHub',
+    sign_in: 'Entrar',
+    checking_short: 'Verificando...',
+    gate_hint: 'O token precisa de acesso de leitura e escrita a "Contents" somente neste repositório.',
+    gate_error: 'Não foi possível validar. Confira o token e as constantes GITHUB_OWNER/GITHUB_REPO no código.',
+    form_add_item: 'Adicionar novo item',
+    form_edit_item: 'Editar item',
+    form_add_video: 'Adicionar novo vídeo',
+    form_edit_video: 'Editar vídeo',
+    label_section: 'Seção',
+    label_category: 'Categoria',
+    label_name_en: 'Nome (inglês)',
+    label_name_pt: 'Nome (português)',
+    label_format: 'Formato',
+    label_size: 'Tamanho',
+    label_desc_en: 'Descrição (inglês)',
+    label_desc_pt: 'Descrição (português)',
+    label_link: 'Link',
+    label_title_en: 'Título (inglês)',
+    label_title_pt: 'Título (português)',
+    label_video_link: 'Link do vídeo',
+    ph_kind: 'ex.: R15, R6, Acessório...',
+    ph_format: 'Detectado automaticamente pelo link',
+    ph_size: 'Detectado automaticamente quando possível',
+    ph_desc_item: 'Uma frase curta sobre o item',
+    ph_desc_video: 'Uma frase curta sobre o vídeo',
+    ph_link: 'GitHub Releases, Drive, Roblox Marketplace etc.',
+    ph_video_link: 'Link do YouTube etc.',
+    add: 'Adicionar',
+    cancel: 'Cancelar',
+    save_changes: 'Salvar alterações',
+    download: 'Baixar',
+    view: 'Ver',
+    watch: 'Assistir',
+    edit: 'Editar',
+    remove: 'Remover',
+    play: 'Reproduzir',
+    empty: 'Nenhum item encontrado.',
+    confirm_remove: 'Remover este item?',
+    removed: 'Removido.',
+    saving: 'Salvando...',
+    saved: 'Salvo.',
+    err_fill_item: 'Preencha pelo menos um nome e o link.',
+    err_fill_video: 'Preencha pelo menos um título e o link.',
+    err_url: 'O link deve começar com http:// ou https://.',
+    err_conflict: 'O catálogo foi alterado em outro lugar. A versão mais recente foi carregada, tente novamente.',
+    err_save: 'Não foi possível salvar. Confira o token e tente novamente.',
+    detecting: 'Detectando informações do arquivo...',
+    checking: 'Verificando o link...',
+    roblox_detected: 'Link do Roblox detectado. O botão vai dizer "Ver".',
+    no_file: 'Nenhum arquivo detectado. O botão vai dizer "Ver".',
+    size_detected: 'Tamanho detectado: ',
+    size_failed: 'Não foi possível detectar o tamanho automaticamente.',
+    footer: 'Por Capis'
+  }
+};
+
+let lang = 'en';
 let rigs = [];
 let videos = [];
 let isAdmin = false;
@@ -794,6 +997,61 @@ let editingRigId = null;
 let editingVideoId = null;
 let statusTimer;
 
+function t(key) {
+  return (STRINGS[lang] && STRINGS[lang][key]) || STRINGS.en[key] || key;
+}
+
+function detectLanguage() {
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'en' || saved === 'pt') return saved;
+  } catch (err) {}
+  const nav = (navigator.languages && navigator.languages[0]) || navigator.language || 'en';
+  return nav.toLowerCase().startsWith('pt') ? 'pt' : 'en';
+}
+
+function applyStaticText() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    el.title = t(el.dataset.i18nTitle);
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    el.setAttribute('aria-label', t(el.dataset.i18nAria));
+  });
+}
+
+function updateSearchPlaceholder() {
+  document.getElementById('searchInput').placeholder = activeSection === 'videos'
+    ? t('search_videos')
+    : t('search_items');
+}
+
+function updateFormLabels() {
+  document.getElementById('rigFormTitle').textContent = editingRigId ? t('form_edit_item') : t('form_add_item');
+  document.getElementById('rigAddSubmit').textContent = editingRigId ? t('save_changes') : t('add');
+  document.getElementById('videoFormTitle').textContent = editingVideoId ? t('form_edit_video') : t('form_add_video');
+  document.getElementById('videoAddSubmit').textContent = editingVideoId ? t('save_changes') : t('add');
+}
+
+function setLanguage(next, silent) {
+  lang = next === 'pt' ? 'pt' : 'en';
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.setAttribute('aria-pressed', btn.dataset.lang === lang);
+  });
+  applyStaticText();
+  updateSearchPlaceholder();
+  updateFormLabels();
+  document.getElementById('rigFormStatus').textContent = '';
+  document.getElementById('videoFormStatus').textContent = '';
+  if (!silent) render();
+}
+
 function isFileSection(section) {
   return FILE_SECTIONS.includes(section);
 }
@@ -802,24 +1060,53 @@ function itemSection(item) {
   return item.section || 'rigs';
 }
 
+function itemName(item) {
+  return lang === 'pt'
+    ? (item.namePt || item.name || '')
+    : (item.name || item.namePt || '');
+}
+
+function itemDesc(item) {
+  return lang === 'pt'
+    ? (item.descriptionPt || item.description || '')
+    : (item.description || item.descriptionPt || '');
+}
+
+function videoTitle(video) {
+  return lang === 'pt'
+    ? (video.titlePt || video.title || '')
+    : (video.title || video.titlePt || '');
+}
+
+function searchText(item) {
+  return [item.name, item.namePt, item.title, item.titlePt, item.description, item.descriptionPt]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+}
+
 function seedRigs() {
   return [
     {
       id: 'exemplo-1',
       name: 'Default R15 Rig (example)',
+      namePt: 'Rig R15 padrão (exemplo)',
       kind: 'R15',
       format: '.rbxm',
       size: '2.1 MB',
       description: 'Example item. Add your own rigs from the creator area.',
+      descriptionPt: 'Item de exemplo. Adicione seus próprios rigs pela área do criador.',
       url: '#'
     },
     {
       id: 'exemplo-2',
       name: 'R6 Rig with leg IK (example)',
+      namePt: 'Rig R6 com IK nas pernas (exemplo)',
       kind: 'R6',
       format: '.rbxmx',
       size: '5.8 MB',
       description: 'Example item. Replace with a real link once the file is uploaded somewhere.',
+      descriptionPt: 'Item de exemplo. Troque por um link real quando o arquivo estiver hospedado.',
       url: '#'
     }
   ];
@@ -830,13 +1117,17 @@ function seedVideos() {
     {
       id: 'video-example-1',
       title: 'Rig setup walkthrough (example)',
+      titlePt: 'Tutorial de configuração do rig (exemplo)',
       description: 'Example item. Replace with a real video link from the creator area.',
+      descriptionPt: 'Item de exemplo. Troque por um link de vídeo real pela área do criador.',
       url: '#'
     },
     {
       id: 'video-example-2',
       title: 'Animation showcase (example)',
+      titlePt: 'Vitrine de animações (exemplo)',
       description: 'Example item. Remove or edit it from the creator area.',
+      descriptionPt: 'Item de exemplo. Remova ou edite pela área do criador.',
       url: '#'
     }
   ];
@@ -917,14 +1208,14 @@ function buildVideoPreview(video) {
 
     const play = document.createElement('button');
     play.className = 'video-play';
-    play.setAttribute('aria-label', 'Play ' + video.title);
+    play.setAttribute('aria-label', t('play') + ' ' + videoTitle(video));
     const icon = document.createElement('span');
     icon.className = 'play-icon';
     play.appendChild(icon);
     play.addEventListener('click', () => {
       const frame = document.createElement('iframe');
       frame.src = 'https://www.youtube-nocookie.com/embed/' + youtubeId + '?autoplay=1&rel=0';
-      frame.title = video.title;
+      frame.title = videoTitle(video);
       frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
       frame.allowFullscreen = true;
       box.innerHTML = '';
@@ -1135,9 +1426,9 @@ async function describeSaveError(err) {
   if (err && err.message === 'conflict') {
     try { await refreshFromRemote(); } catch (e) {}
     render();
-    return 'The catalog was changed elsewhere. Latest version loaded, please try again.';
+    return t('err_conflict');
   }
-  return "Couldn't save. Check the token and try again.";
+  return t('err_save');
 }
 
 function uniqueKinds() {
@@ -1154,7 +1445,7 @@ function renderFilters() {
   uniqueKinds().forEach(kind => {
     const btn = document.createElement('button');
     btn.className = 'filter-btn' + (kind === activeKind ? ' active' : '');
-    btn.textContent = kind;
+    btn.textContent = kind === 'All' ? t('all') : kind;
     btn.addEventListener('click', () => {
       activeKind = kind;
       render();
@@ -1167,17 +1458,13 @@ function matchesRigFilters(rig) {
   const sectionMatch = itemSection(rig) === activeSection;
   const kindMatch = activeKind === 'All' || rig.kind === activeKind;
   const term = searchTerm.trim().toLowerCase();
-  const textMatch = !term ||
-    rig.name.toLowerCase().includes(term) ||
-    (rig.description || '').toLowerCase().includes(term);
+  const textMatch = !term || searchText(rig).includes(term);
   return sectionMatch && kindMatch && textMatch;
 }
 
 function matchesVideoFilters(video) {
   const term = searchTerm.trim().toLowerCase();
-  return !term ||
-    video.title.toLowerCase().includes(term) ||
-    (video.description || '').toLowerCase().includes(term);
+  return !term || searchText(video).includes(term);
 }
 
 function buildRigCard(rig) {
@@ -1188,7 +1475,7 @@ function buildRigCard(rig) {
   top.className = 'card-top';
   const name = document.createElement('h3');
   name.className = 'card-name';
-  name.textContent = rig.name;
+  name.textContent = itemName(rig);
   top.appendChild(name);
   if (rig.kind) {
     const kindTag = document.createElement('span');
@@ -1198,10 +1485,11 @@ function buildRigCard(rig) {
   }
   card.appendChild(top);
 
-  if (rig.description) {
+  const description = itemDesc(rig);
+  if (description) {
     const desc = document.createElement('p');
     desc.className = 'card-desc';
-    desc.textContent = rig.description;
+    desc.textContent = description;
     card.appendChild(desc);
   }
 
@@ -1218,7 +1506,7 @@ function buildRigCard(rig) {
   actions.className = 'card-actions';
   const download = document.createElement('a');
   download.className = 'download-btn';
-  download.textContent = isFile ? 'Download' : 'View';
+  download.textContent = isFile ? t('download') : t('view');
   download.href = safeUrl(rig.url);
   download.target = '_blank';
   download.rel = 'noopener noreferrer';
@@ -1227,13 +1515,13 @@ function buildRigCard(rig) {
   if (isAdmin) {
     const edit = document.createElement('button');
     edit.className = 'edit-btn';
-    edit.textContent = 'Edit';
+    edit.textContent = t('edit');
     edit.addEventListener('click', () => startEditRig(rig));
     actions.appendChild(edit);
 
     const del = document.createElement('button');
     del.className = 'delete-btn';
-    del.textContent = 'Remove';
+    del.textContent = t('remove');
     del.addEventListener('click', () => deleteItem('rigs', rig.id));
     actions.appendChild(del);
   }
@@ -1251,13 +1539,14 @@ function buildVideoCard(video) {
 
   const name = document.createElement('h3');
   name.className = 'card-name';
-  name.textContent = video.title;
+  name.textContent = videoTitle(video);
   card.appendChild(name);
 
-  if (video.description) {
+  const description = itemDesc(video);
+  if (description) {
     const desc = document.createElement('p');
     desc.className = 'card-desc';
-    desc.textContent = video.description;
+    desc.textContent = description;
     card.appendChild(desc);
   }
 
@@ -1273,7 +1562,7 @@ function buildVideoCard(video) {
   actions.className = 'card-actions';
   const watch = document.createElement('a');
   watch.className = 'download-btn';
-  watch.textContent = 'Watch';
+  watch.textContent = t('watch');
   watch.href = safeUrl(video.url);
   watch.target = '_blank';
   watch.rel = 'noopener noreferrer';
@@ -1282,13 +1571,13 @@ function buildVideoCard(video) {
   if (isAdmin) {
     const edit = document.createElement('button');
     edit.className = 'edit-btn';
-    edit.textContent = 'Edit';
+    edit.textContent = t('edit');
     edit.addEventListener('click', () => startEditVideo(video));
     actions.appendChild(edit);
 
     const del = document.createElement('button');
     del.className = 'delete-btn';
-    del.textContent = 'Remove';
+    del.textContent = t('remove');
     del.addEventListener('click', () => deleteItem('videos', video.id));
     actions.appendChild(del);
   }
@@ -1307,7 +1596,7 @@ function render() {
   if (items.length === 0) {
     const empty = document.createElement('div');
     empty.className = 'empty-state';
-    empty.textContent = 'No items found.';
+    empty.textContent = t('empty');
     grid.appendChild(empty);
     return;
   }
@@ -1317,7 +1606,7 @@ function render() {
 }
 
 async function deleteItem(section, id) {
-  if (!confirm('Remove this item?')) return;
+  if (!confirm(t('confirm_remove'))) return;
   const previousRigs = rigs;
   const previousVideos = videos;
   if (section === 'rigs') {
@@ -1328,7 +1617,7 @@ async function deleteItem(section, id) {
   render();
   try {
     await persistCatalog();
-    showGlobalStatus('Removed.', 'var(--line)');
+    showGlobalStatus(t('removed'), 'var(--line)');
   } catch (err) {
     rigs = previousRigs;
     videos = previousVideos;
@@ -1339,26 +1628,26 @@ async function deleteItem(section, id) {
 }
 
 function resetRigForm() {
-  ['fName', 'fKind', 'fFormat', 'fSize', 'fDesc', 'fUrl'].forEach(id => {
+  ['fName', 'fNamePt', 'fKind', 'fFormat', 'fSize', 'fDesc', 'fDescPt', 'fUrl'].forEach(id => {
     document.getElementById(id).value = '';
   });
   editingRigId = null;
   document.getElementById('fSection').value = isFileSection(activeSection) ? activeSection : 'rigs';
-  document.getElementById('rigFormTitle').textContent = 'Add new item';
-  document.getElementById('rigAddSubmit').textContent = 'Add';
+  updateFormLabels();
 }
 
 function startEditRig(rig) {
   document.getElementById('fName').value = rig.name || '';
+  document.getElementById('fNamePt').value = rig.namePt || '';
   document.getElementById('fKind').value = rig.kind || '';
   document.getElementById('fFormat').value = rig.format || '';
   document.getElementById('fSize').value = rig.size || '';
   document.getElementById('fDesc').value = rig.description || '';
+  document.getElementById('fDescPt').value = rig.descriptionPt || '';
   document.getElementById('fUrl').value = rig.url || '';
   document.getElementById('fSection').value = itemSection(rig);
   editingRigId = rig.id;
-  document.getElementById('rigFormTitle').textContent = 'Edit item';
-  document.getElementById('rigAddSubmit').textContent = 'Save changes';
+  updateFormLabels();
   document.getElementById('rigFormStatus').textContent = '';
   const panel = document.getElementById('rigFormPanel');
   panel.classList.remove('hidden');
@@ -1366,21 +1655,21 @@ function startEditRig(rig) {
 }
 
 function resetVideoForm() {
-  ['vTitle', 'vDesc', 'vUrl'].forEach(id => {
+  ['vTitle', 'vTitlePt', 'vDesc', 'vDescPt', 'vUrl'].forEach(id => {
     document.getElementById(id).value = '';
   });
   editingVideoId = null;
-  document.getElementById('videoFormTitle').textContent = 'Add new video';
-  document.getElementById('videoAddSubmit').textContent = 'Add';
+  updateFormLabels();
 }
 
 function startEditVideo(video) {
   document.getElementById('vTitle').value = video.title || '';
+  document.getElementById('vTitlePt').value = video.titlePt || '';
   document.getElementById('vDesc').value = video.description || '';
+  document.getElementById('vDescPt').value = video.descriptionPt || '';
   document.getElementById('vUrl').value = video.url || '';
   editingVideoId = video.id;
-  document.getElementById('videoFormTitle').textContent = 'Edit video';
-  document.getElementById('videoAddSubmit').textContent = 'Save changes';
+  updateFormLabels();
   document.getElementById('videoFormStatus').textContent = '';
   const panel = document.getElementById('videoFormPanel');
   panel.classList.remove('hidden');
@@ -1391,11 +1680,8 @@ function switchSection(section) {
   activeSection = section;
   activeKind = 'All';
   searchTerm = '';
-  const search = document.getElementById('searchInput');
-  search.value = '';
-  search.placeholder = section === 'videos'
-    ? 'Search by title or description...'
-    : 'Search by name or description...';
+  document.getElementById('searchInput').value = '';
+  updateSearchPlaceholder();
   const tabs = {
     rigs: 'tabRigs',
     resources: 'tabResources',
@@ -1443,7 +1729,7 @@ document.getElementById('gateSubmit').addEventListener('click', async () => {
     return;
   }
   button.disabled = true;
-  button.textContent = 'Checking...';
+  button.textContent = t('checking_short');
   let ok = false;
   try {
     ok = await verifyTokenAndLoad(token);
@@ -1451,7 +1737,7 @@ document.getElementById('gateSubmit').addEventListener('click', async () => {
     ok = false;
   }
   button.disabled = false;
-  button.textContent = 'Sign in';
+  button.textContent = t('sign_in');
   if (ok) {
     isAdmin = true;
     document.getElementById('gatePanel').classList.add('hidden');
@@ -1469,14 +1755,15 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
   const status = document.getElementById('rigFormStatus');
   const button = document.getElementById('rigAddSubmit');
   const name = document.getElementById('fName').value.trim();
+  const namePt = document.getElementById('fNamePt').value.trim();
   const url = document.getElementById('fUrl').value.trim();
-  if (!name || !url) {
-    status.textContent = 'Fill in at least the name and the link.';
+  if ((!name && !namePt) || !url) {
+    status.textContent = t('err_fill_item');
     status.style.color = 'var(--danger)';
     return;
   }
   if (!isValidUrl(url)) {
-    status.textContent = 'The link must start with http:// or https://.';
+    status.textContent = t('err_url');
     status.style.color = 'var(--danger)';
     return;
   }
@@ -1486,7 +1773,7 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
     format = '';
     size = '';
   } else if (isDownloadUrl(url) && (!format || !size)) {
-    status.textContent = 'Detecting file info...';
+    status.textContent = t('detecting');
     status.style.color = 'var(--text-muted)';
     button.disabled = true;
     const info = await detectFileInfo(url);
@@ -1496,11 +1783,13 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
   }
   const data = {
     name,
+    namePt,
     section: document.getElementById('fSection').value,
     kind: document.getElementById('fKind').value.trim(),
     format,
     size,
     description: document.getElementById('fDesc').value.trim(),
+    descriptionPt: document.getElementById('fDescPt').value.trim(),
     url
   };
   const previousRigs = rigs;
@@ -1509,13 +1798,13 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
   } else {
     rigs = [...rigs, { id: newId('rig'), ...data }];
   }
-  status.textContent = 'Saving...';
+  status.textContent = t('saving');
   status.style.color = 'var(--text-muted)';
   button.disabled = true;
   try {
     await persistCatalog();
     resetRigForm();
-    status.textContent = 'Saved.';
+    status.textContent = t('saved');
     status.style.color = 'var(--line)';
     render();
   } catch (err) {
@@ -1536,20 +1825,23 @@ document.getElementById('videoAddSubmit').addEventListener('click', async () => 
   const status = document.getElementById('videoFormStatus');
   const button = document.getElementById('videoAddSubmit');
   const title = document.getElementById('vTitle').value.trim();
+  const titlePt = document.getElementById('vTitlePt').value.trim();
   const url = document.getElementById('vUrl').value.trim();
-  if (!title || !url) {
-    status.textContent = 'Fill in at least the title and the link.';
+  if ((!title && !titlePt) || !url) {
+    status.textContent = t('err_fill_video');
     status.style.color = 'var(--danger)';
     return;
   }
   if (!isValidUrl(url)) {
-    status.textContent = 'The link must start with http:// or https://.';
+    status.textContent = t('err_url');
     status.style.color = 'var(--danger)';
     return;
   }
   const data = {
     title,
+    titlePt,
     description: document.getElementById('vDesc').value.trim(),
+    descriptionPt: document.getElementById('vDescPt').value.trim(),
     url
   };
   const previousVideos = videos;
@@ -1558,13 +1850,13 @@ document.getElementById('videoAddSubmit').addEventListener('click', async () => 
   } else {
     videos = [...videos, { id: newId('video'), ...data }];
   }
-  status.textContent = 'Saving...';
+  status.textContent = t('saving');
   status.style.color = 'var(--text-muted)';
   button.disabled = true;
   try {
     await persistCatalog();
     resetVideoForm();
-    status.textContent = 'Saved.';
+    status.textContent = t('saved');
     status.style.color = 'var(--line)';
     render();
   } catch (err) {
@@ -1701,10 +1993,10 @@ function drawRig() {
 let rigLast = 0;
 let rigAcc = 0;
 
-function rigLoop(t) {
-  if (!rigLast) rigLast = t;
-  rigAcc += Math.min(t - rigLast, 50);
-  rigLast = t;
+function rigLoop(time) {
+  if (!rigLast) rigLast = time;
+  rigAcc += Math.min(time - rigLast, 50);
+  rigLast = time;
   while (rigAcc >= RIG_STEP) {
     stepRig();
     rigAcc -= RIG_STEP;
@@ -1777,7 +2069,7 @@ document.getElementById('fUrl').addEventListener('change', async () => {
   const url = urlField.value.trim();
   const status = document.getElementById('rigFormStatus');
   if (!isValidUrl(url)) return;
-  status.textContent = 'Checking link...';
+  status.textContent = t('checking');
   status.style.color = 'var(--text-muted)';
   const info = await detectFileInfo(url);
   if (urlField.value.trim() !== url) return;
@@ -1786,22 +2078,33 @@ document.getElementById('fUrl').addEventListener('change', async () => {
   if (!info.download) {
     formatField.value = '';
     sizeField.value = '';
-    status.textContent = info.roblox
-      ? 'Roblox link detected. The button will say View.'
-      : 'No file detected. The button will say View.';
+    status.textContent = info.roblox ? t('roblox_detected') : t('no_file');
     status.style.color = 'var(--line)';
     return;
   }
   if (info.format) formatField.value = info.format;
   if (info.size) {
     sizeField.value = info.size;
-    status.textContent = 'Size detected: ' + info.size;
+    status.textContent = t('size_detected') + info.size;
     status.style.color = 'var(--line)';
   } else {
-    status.textContent = "Couldn't detect the size automatically.";
+    status.textContent = t('size_failed');
     status.style.color = 'var(--text-muted)';
   }
 });
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setLanguage(btn.dataset.lang);
+    try {
+      localStorage.setItem(LANG_KEY, lang);
+    } catch (err) {}
+  });
+});
+
+document.getElementById('repoLink').href = 'https://github.com/' + GITHUB_OWNER + '/' + GITHUB_REPO;
+
+setLanguage(detectLanguage(), true);
 
 requestAnimationFrame(rigLoop);
 
