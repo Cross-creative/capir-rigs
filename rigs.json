@@ -60,8 +60,9 @@
       "kind": "R15",
       "format": ".blend",
       "size": "378 KB",
-      "description": "R15 rig but better",
-      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R15Rig.blend"
+      "description": "R15 Rig but better.",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/R15Rig.blend",
+      "section": "rigs"
     },
     {
       "id": "rig-1788887162751",
