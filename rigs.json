@@ -68,7 +68,9 @@
       "size": "1.2 MB",
       "description": "Improved version of the classic R6IK.",
       "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/ImproveR6IK.blend",
-      "section": "rigs"
+      "section": "rigs",
+      "namePt": "",
+      "descriptionPt": "Versão aprimorada do clássico R6IK."
     },
     {
       "id": "rig-1788886722048",
