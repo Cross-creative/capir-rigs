@@ -203,8 +203,10 @@
       "kind": "R6",
       "format": ".blend",
       "size": "1.23 MB",
-      "description": "Very simple rig. By Egor (i think).",
-      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/conehead.blend"
+      "description": "Very simple rig. By Egor. (i think)",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/conehead.blend",
+      "namePt": "",
+      "descriptionPt": "Rig bem simples. Pelo Egor. (eu acho)"
     },
     {
       "id": "rig-00df5aef-f94f-46eb-9a13-09af8be9ac7c",
