@@ -92,7 +92,9 @@
       "size": "15 MB",
       "description": "alot of resources, by Vyzons.",
       "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/vyzons.blender.pack.zip",
-      "section": "resources"
+      "section": "resources",
+      "namePt": "Pacote de recursos do Vyzons",
+      "descriptionPt": "muitos recursos, pelo Vyzons."
     },
     {
       "id": "rig-4d079e2f-eb40-4567-b75e-5c9c1b35e1b6",
