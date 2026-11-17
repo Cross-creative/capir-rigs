@@ -19,7 +19,10 @@
       "format": ".blend",
       "size": "8.22 MB",
       "description": "A advanced rig, with IK features.",
-      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/RevRig.1.7.blend"
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/RevRig.1.7.blend",
+      "namePt": "",
+      "section": "rigs",
+      "descriptionPt": "Rig avançado, com funções IK."
     },
     {
       "id": "rig-1788825569626",
