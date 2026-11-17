@@ -43,7 +43,10 @@
       "format": ".blend",
       "size": "1.4 MB",
       "description": "Unparented Legs.",
-      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/55Epa.Rig.blend"
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/55Epa.Rig.blend",
+      "namePt": "",
+      "section": "rigs",
+      "descriptionPt": "Pernas não parentadas."
     },
     {
       "id": "rig-1788836576084",
