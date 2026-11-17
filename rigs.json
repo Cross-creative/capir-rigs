@@ -134,14 +134,14 @@
     },
     {
       "id": "rig-a91a27b1-20c0-44f5-a077-73d13a7a09f4",
-      "name": "Hand Rig",
+      "name": "R6 Hand Rig",
       "section": "resources",
       "kind": "Resources",
       "format": ".rbxm",
       "size": "29.2 KB",
       "description": "Hand Rig R6, by LeftRight",
       "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/Hand.Rig-Fixed.1.rbxm",
-      "namePt": "",
+      "namePt": "R6 com Mãos",
       "descriptionPt": "Rig R6 com mãos, pelo LeftRight"
     },
     {
