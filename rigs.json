@@ -104,7 +104,9 @@
       "format": "rbxm",
       "size": "32.8 KB",
       "description": "Moon Animator Cam",
-      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/MoonAnimatorCamREMADE.rbxm"
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/MoonAnimatorCamREMADE.rbxm",
+      "namePt": "",
+      "descriptionPt": "Câmera para Moon Animator"
     },
     {
       "id": "rig-0f6c0eef-ea45-4e32-a7c3-9f10e37748ab",
