@@ -116,7 +116,9 @@
       "format": "rbxm",
       "size": "50.7 KB",
       "description": "Roblox Skeleton Xray",
-      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/MK.xray.skeleton.rbxm"
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/MK.xray.skeleton.rbxm",
+      "namePt": "Esqueleto Xray",
+      "descriptionPt": "Esqueleto padrão do roblox, só que Xray"
     },
     {
       "id": "rig-5147bff2-8f13-4cb8-bd58-ddd8df05d524",
