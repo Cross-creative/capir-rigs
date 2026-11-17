@@ -188,7 +188,9 @@
       "format": "",
       "size": "",
       "description": "RBX_Monkey Blender Addon. Created by CAUTIONED",
-      "url": "https://github.com/Cautioned/Blender-Animations-Plugin?tab=readme-ov-file"
+      "url": "https://github.com/Cautioned/Blender-Animations-Plugin?tab=readme-ov-file",
+      "namePt": "",
+      "descriptionPt": "Add-on RBX_Monkey para Blender. Criado por CAUTIONED"
     },
     {
       "id": "rig-e7a7456d-06c7-4e70-b745-3c824b91f318",
