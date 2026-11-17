@@ -215,8 +215,10 @@
       "kind": "R6",
       "format": ".blend",
       "size": "3.96 MB",
-      "description": "Double Rigs. By Egor.",
-      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/DOUBLE_EGOR_RIGS_V5.blend"
+      "description": "Double Egor Rigs. By Egor.",
+      "url": "https://github.com/Cross-creative/capir-rigs/releases/download/Rig/DOUBLE_EGOR_RIGS_V5.blend",
+      "namePt": "",
+      "descriptionPt": "Egor Rigs Duplos. Pelo Egor."
     }
   ],
   "videos": [
