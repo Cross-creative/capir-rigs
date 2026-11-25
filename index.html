@@ -8,19 +8,18 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0F1420;
-  --panel: #161D2E;
-  --panel-border: #262F45;
-  --line: #4FD1C5;
-  --line-dim: #2E5B57;
-  --amber: #F2A93B;
-  --text: #E8ECF4;
-  --text-muted: #8892A6;
-  --danger: #E0654F;
-  --radius: 6px;
+  --bg: #0B0D12;
+  --surface: #12151C;
+  --border: #212633;
+  --accent: #7C8CFF;
+  --accent-ink: #0B0D12;
+  --text: #ECEEF3;
+  --text-muted: #8A92A3;
+  --danger: #F0646A;
+  --radius: 10px;
 }
 
 * { box-sizing: border-box; }
@@ -30,14 +29,8 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Space Grotesk', system-ui, sans-serif;
-  background-image:
-    linear-gradient(rgba(79, 209, 197, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(79, 209, 197, 0.05) 1px, transparent 1px);
-  background-size: 32px 32px;
+  font-family: 'Inter', system-ui, sans-serif;
 }
-
-.mono { font-family: 'IBM Plex Mono', monospace; }
 
 .wrap {
   max-width: 1040px;
@@ -50,8 +43,8 @@ html, body {
   align-items: center;
   gap: 40px;
   padding-bottom: 40px;
-  border-bottom: 1px solid var(--panel-border);
-  margin-bottom: 40px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border);
 }
 
 .hero-figure {
@@ -73,7 +66,7 @@ html, body {
 
 .rig-line {
   fill: none;
-  stroke: var(--line);
+  stroke: var(--accent);
   stroke-width: 2;
   stroke-linecap: round;
   stroke-dasharray: 340;
@@ -81,19 +74,19 @@ html, body {
   animation: draw 1.4s ease-out forwards;
 }
 
+#rigHead {
+  stroke-dasharray: 57;
+  stroke-dashoffset: 57;
+}
+
 .rig-joint {
-  fill: var(--amber);
+  fill: var(--text);
   opacity: 0;
   animation: appear 0.4s ease-out forwards;
 }
 
 @keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes appear { to { opacity: 1; } }
-
-@media (prefers-reduced-motion: reduce) {
-  .rig-line { animation: none; stroke-dashoffset: 0; }
-  .rig-joint { animation: none; opacity: 1; }
-}
 
 .brand {
   display: flex;
@@ -103,20 +96,23 @@ html, body {
   margin-bottom: 12px;
 }
 
-.brand-icon {
-  width: 64px;
-  height: 64px;
+.brand-link {
+  display: flex;
   flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.brand-icon {
+  width: 56px;
+  height: 56px;
 }
 
 .hero-text h1 {
-  font-size: 34px;
+  font-size: 32px;
   font-weight: 700;
-  margin: 0 0 12px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  margin: 0;
 }
-
-.hero-text .brand h1 { margin: 0; }
 
 .hero-text p {
   color: var(--text-muted);
@@ -129,7 +125,7 @@ html, body {
 .lang-switch {
   display: inline-flex;
   margin-left: 6px;
-  border: 1px solid var(--panel-border);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
 }
@@ -138,41 +134,42 @@ html, body {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-family: inherit;
+  font: inherit;
   font-size: 12px;
   font-weight: 600;
   padding: 7px 11px;
   cursor: pointer;
-  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .lang-btn[aria-pressed="true"] {
-  color: var(--amber);
-  background: rgba(242, 169, 59, 0.12);
+  color: var(--text);
+  background: var(--surface);
 }
 
 .section-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 6px;
   margin-bottom: 20px;
 }
 
 .tab-btn {
   background: transparent;
-  border: 1px solid var(--panel-border);
+  border: none;
   color: var(--text-muted);
-  padding: 10px 20px;
+  padding: 9px 16px;
   border-radius: var(--radius);
-  font-family: inherit;
+  font: inherit;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
 }
 
+.tab-btn:hover { color: var(--text); }
+
 .tab-btn.active {
-  border-color: var(--amber);
-  color: var(--amber);
+  background: var(--surface);
+  color: var(--text);
 }
 
 .toolbar {
@@ -183,20 +180,32 @@ html, body {
   margin-bottom: 24px;
 }
 
-.search-input {
-  flex: 1 1 220px;
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
+.search-input,
+.field input,
+.field textarea,
+.field select,
+.admin-gate input {
+  background: var(--bg);
+  border: 1px solid var(--border);
   color: var(--text);
-  padding: 11px 14px;
+  padding: 10px 14px;
   border-radius: var(--radius);
-  font-family: inherit;
+  font: inherit;
   font-size: 14px;
 }
 
-.search-input:focus {
+.search-input {
+  flex: 1 1 220px;
+  background: var(--surface);
+}
+
+.search-input:focus,
+.field input:focus,
+.field textarea:focus,
+.field select:focus,
+.admin-gate input:focus {
   outline: none;
-  border-color: var(--line);
+  border-color: var(--accent);
 }
 
 .filters {
@@ -207,31 +216,35 @@ html, body {
 
 .filter-btn {
   background: transparent;
-  border: 1px solid var(--panel-border);
+  border: 1px solid var(--border);
   color: var(--text-muted);
-  padding: 9px 14px;
-  border-radius: var(--radius);
-  font-family: inherit;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font: inherit;
   font-size: 13px;
   cursor: pointer;
 }
 
+.filter-btn:hover { color: var(--text); }
+
 .filter-btn.active {
-  border-color: var(--line);
-  color: var(--line);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .admin-toggle {
   margin-left: auto;
   background: transparent;
-  border: 1px solid var(--panel-border);
+  border: 1px solid var(--border);
   color: var(--text);
-  font-family: inherit;
+  font: inherit;
   font-size: 13px;
   padding: 9px 14px;
   border-radius: var(--radius);
   cursor: pointer;
 }
+
+.admin-toggle:hover { background: var(--surface); }
 
 .global-status {
   font-size: 13px;
@@ -240,8 +253,8 @@ html, body {
 }
 
 .panel {
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
   margin-bottom: 24px;
@@ -252,10 +265,22 @@ html, body {
 .panel h2 {
   font-size: 15px;
   margin: 0 0 16px;
-  color: var(--line);
 }
 
-.panel p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+.panel p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.panel .gate-hint { margin-top: 10px; }
+
+.panel .gate-error {
+  color: var(--danger);
+  margin-top: 8px;
+  display: none;
+}
 
 .field-row {
   display: grid;
@@ -277,46 +302,47 @@ html, body {
   color: var(--text-muted);
 }
 
-.field input, .field textarea, .field select {
-  background: var(--bg);
-  border: 1px solid var(--panel-border);
-  color: var(--text);
-  padding: 9px 11px;
-  border-radius: var(--radius);
-  font-family: inherit;
-  font-size: 14px;
-}
-
-.field textarea { resize: vertical; min-height: 60px; }
-
-.field input:focus, .field textarea:focus, .field select:focus {
-  outline: none;
-  border-color: var(--line);
+.field textarea {
+  resize: vertical;
+  min-height: 60px;
 }
 
 .btn {
-  background: var(--line);
-  color: #0B1017;
+  background: var(--accent);
+  color: var(--accent-ink);
   border: none;
   padding: 10px 18px;
   border-radius: var(--radius);
-  font-family: inherit;
+  font: inherit;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
 }
 
-.btn:disabled { opacity: 0.6; cursor: default; }
+.btn:hover:not(:disabled) { filter: brightness(1.1); }
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
 
 .btn.secondary {
   background: transparent;
-  border: 1px solid var(--panel-border);
+  border: 1px solid var(--border);
   color: var(--text);
 }
 
-.form-actions { display: flex; gap: 10px; margin-top: 4px; align-items: center; }
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+  align-items: center;
+}
 
-.form-status { font-size: 13px; margin: 0; }
+.form-status {
+  font-size: 13px;
+  margin: 0;
+}
 
 .admin-gate {
   display: flex;
@@ -324,26 +350,7 @@ html, body {
   align-items: center;
 }
 
-.admin-gate input {
-  flex: 1;
-  background: var(--bg);
-  border: 1px solid var(--panel-border);
-  color: var(--text);
-  padding: 9px 11px;
-  border-radius: var(--radius);
-  font-family: inherit;
-}
-
-.gate-hint {
-  margin-top: 10px !important;
-}
-
-.gate-error {
-  color: var(--danger) !important;
-  font-size: 13px;
-  margin-top: 8px !important;
-  display: none;
-}
+.admin-gate input { flex: 1; }
 
 .grid {
   display: grid;
@@ -352,17 +359,17 @@ html, body {
 }
 
 .card {
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.2s ease;
 }
 
-.card:hover { border-color: var(--line-dim); }
+.card:hover { border-color: var(--accent); }
 
 .video-preview {
   position: relative;
@@ -395,16 +402,15 @@ html, body {
   width: 100%;
   padding: 0;
   border: none;
-  background: rgba(15, 20, 32, 0.25);
+  background: rgba(11, 13, 18, 0.25);
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
 .play-icon {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: rgba(15, 20, 32, 0.75);
+  background: rgba(11, 13, 18, 0.75);
   border: 2px solid var(--text);
   display: flex;
   align-items: center;
@@ -419,6 +425,8 @@ html, body {
   border-width: 9px 0 9px 15px;
   border-color: transparent transparent transparent var(--text);
 }
+
+.video-play:hover .play-icon { transform: scale(1.1); }
 
 .card-top {
   display: flex;
@@ -437,10 +445,10 @@ html, body {
 .card-kind {
   flex: 0 0 auto;
   font-size: 11px;
-  color: var(--line);
-  border: 1px solid var(--line-dim);
+  color: var(--accent);
+  border: 1px solid var(--border);
   padding: 3px 8px;
-  border-radius: 4px;
+  border-radius: 999px;
 }
 
 .card-desc {
@@ -467,36 +475,33 @@ html, body {
 .download-btn {
   flex: 1;
   text-align: center;
-  background: var(--amber);
-  color: #241703;
-  border: none;
+  background: var(--accent);
+  color: var(--accent-ink);
   padding: 10px 0;
   border-radius: var(--radius);
   font-weight: 600;
   font-size: 13.5px;
   text-decoration: none;
-  cursor: pointer;
 }
 
-.edit-btn {
-  background: transparent;
-  border: 1px solid var(--panel-border);
-  color: var(--text);
-  padding: 10px 12px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 13px;
-}
+.download-btn:hover { filter: brightness(1.1); }
 
+.edit-btn,
 .delete-btn {
   background: transparent;
-  border: 1px solid var(--panel-border);
-  color: var(--danger);
+  border: 1px solid var(--border);
   padding: 10px 12px;
   border-radius: var(--radius);
   cursor: pointer;
+  font: inherit;
   font-size: 13px;
 }
+
+.edit-btn { color: var(--text); }
+.delete-btn { color: var(--danger); }
+
+.edit-btn:hover,
+.delete-btn:hover { background: var(--bg); }
 
 .empty-state {
   grid-column: 1 / -1;
@@ -505,161 +510,16 @@ html, body {
   color: var(--text-muted);
 }
 
-.tab-btn,
-.filter-btn,
-.admin-toggle,
-.btn,
-.download-btn,
-.edit-btn,
-.delete-btn {
-  transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease,
-    color 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-}
-
-.card {
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.search-input,
-.field input,
-.field textarea,
-.field select,
-.admin-gate input {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.search-input:focus,
-.field input:focus,
-.field textarea:focus,
-.field select:focus,
-.admin-gate input:focus {
-  box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.15);
-}
-
-.panel { animation: panelIn 0.25s ease; }
-
-@keyframes panelIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: none; }
-}
-
-.brand-link {
-  display: flex;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  transition: transform 0.15s ease, filter 0.2s ease;
-}
-
-@media (hover: hover) {
-  .tab-btn:hover,
-  .filter-btn:hover,
-  .admin-toggle:hover,
-  .btn:hover:not(:disabled),
-  .download-btn:hover,
-  .edit-btn:hover,
-  .delete-btn:hover {
-    transform: translateY(-2px);
-  }
-
-  .tab-btn:not(.active):hover,
-  .filter-btn:not(.active):hover {
-    color: var(--text);
-  }
-
-  .tab-btn.active:hover,
-  .filter-btn.active:hover,
-  .delete-btn:hover {
-    filter: brightness(1.3);
-  }
-
-  .admin-toggle:hover,
-  .edit-btn:hover,
-  .btn.secondary:hover:not(:disabled) {
-    color: #FFFFFF;
-  }
-
-  .btn:hover:not(:disabled),
-  .download-btn:hover {
-    filter: brightness(1.1);
-  }
-
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-  }
-
-  .brand-link:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
-  }
-
-  .lang-btn[aria-pressed="false"]:hover { color: var(--text); }
-
-  .video-play:hover { background: rgba(15, 20, 32, 0.1); }
-  .video-play:hover .play-icon { transform: scale(1.1); }
-}
-
-.tab-btn:active,
-.filter-btn:active,
-.admin-toggle:active,
-.btn:active:not(:disabled),
-.download-btn:active,
-.edit-btn:active,
-.delete-btn:active {
-  transform: translateY(0) scale(0.96);
-  box-shadow: none;
-  filter: none;
-}
-
-.brand-link:active { transform: scale(0.96); }
-
-@media (prefers-reduced-motion: reduce) {
-  .tab-btn,
-  .filter-btn,
-  .admin-toggle,
-  .btn,
-  .download-btn,
-  .edit-btn,
-  .delete-btn,
-  .card,
-  .brand-link,
-  .lang-btn {
-    transition: none;
-  }
-
-  .tab-btn:hover,
-  .filter-btn:hover,
-  .admin-toggle:hover,
-  .btn:hover,
-  .download-btn:hover,
-  .edit-btn:hover,
-  .delete-btn:hover,
-  .card:hover,
-  .brand-link:hover,
-  .tab-btn:active,
-  .filter-btn:active,
-  .admin-toggle:active,
-  .btn:active,
-  .download-btn:active,
-  .edit-btn:active,
-  .delete-btn:active,
-  .brand-link:active {
-    transform: none !important;
-  }
-
-  .panel { animation: none; }
-}
-
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--amber);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
 footer {
   margin-top: 56px;
   padding-top: 20px;
-  border-top: 1px solid var(--panel-border);
+  border-top: 1px solid var(--border);
   color: var(--text-muted);
   font-size: 12.5px;
   line-height: 1.7;
@@ -668,9 +528,15 @@ footer {
 @media (max-width: 600px) {
   .hero { flex-direction: column; align-items: flex-start; gap: 20px; }
   .hero-figure { flex-basis: 100px; width: 100px; height: 130px; }
-  .brand-icon { width: 48px; height: 48px; }
+  .brand-icon { width: 44px; height: 44px; }
   .field-row { grid-template-columns: 1fr; }
   .admin-toggle { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  .rig-line, #rigHead { animation: none; stroke-dashoffset: 0; }
+  .rig-joint { animation: none; opacity: 1; }
 }
 </style>
 </head>
@@ -681,7 +547,7 @@ footer {
     <div class="hero-figure">
       <svg id="rigSvg" viewBox="0 0 100 130" aria-hidden="true" focusable="false">
         <g id="rigBones"></g>
-        <circle id="rigHead" class="rig-line" cx="50" cy="12" r="9" style="fill:none;stroke-dasharray:57;stroke-dashoffset:57;animation-delay:0s"></circle>
+        <circle id="rigHead" class="rig-line" cx="50" cy="12" r="9"></circle>
         <g id="rigJoints"></g>
       </svg>
     </div>
@@ -714,11 +580,6 @@ footer {
   </div>
 
   <p class="global-status" id="globalStatus" role="status" aria-live="polite"></p>
-
-  <div class="panel hidden" id="configBanner">
-    <h2 data-i18n="setup_title">Setup needed</h2>
-    <p data-i18n="setup_text">Set GITHUB_OWNER and GITHUB_REPO at the top of the script to your repository before publishing this site. Until then, the catalog only shows example items.</p>
-  </div>
 
   <div class="panel hidden" id="gatePanel">
     <h2 data-i18n="gate_title">Sign in as creator</h2>
@@ -838,7 +699,6 @@ const DATA_PATH = 'rigs.json';
 
 const RAW_URL = 'https://raw.githubusercontent.com/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/' + GITHUB_BRANCH + '/' + DATA_PATH;
 const API_URL = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + DATA_PATH;
-const isConfigured = GITHUB_OWNER !== 'your-username' && GITHUB_REPO !== 'your-repository';
 
 const FILE_SECTIONS = ['rigs', 'resources', 'plugins'];
 const LANG_KEY = 'animator-bench-lang';
@@ -855,8 +715,6 @@ const STRINGS = {
     search_videos: 'Search by title or description...',
     all: 'All',
     creator_area: 'Creator area',
-    setup_title: 'Setup needed',
-    setup_text: 'Set GITHUB_OWNER and GITHUB_REPO at the top of the script to your repository before publishing this site. Until then, the catalog only shows example items.',
     gate_title: 'Sign in as creator',
     gate_token: 'GitHub access token',
     sign_in: 'Sign in',
@@ -924,8 +782,6 @@ const STRINGS = {
     search_videos: 'Buscar por título ou descrição...',
     all: 'Todos',
     creator_area: 'Área do criador',
-    setup_title: 'Configuração necessária',
-    setup_text: 'Defina GITHUB_OWNER e GITHUB_REPO no topo do script com o seu repositório antes de publicar o site. Até lá, o catálogo mostra apenas itens de exemplo.',
     gate_title: 'Entrar como criador',
     gate_token: 'Token de acesso do GitHub',
     sign_in: 'Entrar',
@@ -1085,54 +941,6 @@ function searchText(item) {
     .toLowerCase();
 }
 
-function seedRigs() {
-  return [
-    {
-      id: 'exemplo-1',
-      name: 'Default R15 Rig (example)',
-      namePt: 'Rig R15 padrão (exemplo)',
-      kind: 'R15',
-      format: '.rbxm',
-      size: '2.1 MB',
-      description: 'Example item. Add your own rigs from the creator area.',
-      descriptionPt: 'Item de exemplo. Adicione seus próprios rigs pela área do criador.',
-      url: '#'
-    },
-    {
-      id: 'exemplo-2',
-      name: 'R6 Rig with leg IK (example)',
-      namePt: 'Rig R6 com IK nas pernas (exemplo)',
-      kind: 'R6',
-      format: '.rbxmx',
-      size: '5.8 MB',
-      description: 'Example item. Replace with a real link once the file is uploaded somewhere.',
-      descriptionPt: 'Item de exemplo. Troque por um link real quando o arquivo estiver hospedado.',
-      url: '#'
-    }
-  ];
-}
-
-function seedVideos() {
-  return [
-    {
-      id: 'video-example-1',
-      title: 'Rig setup walkthrough (example)',
-      titlePt: 'Tutorial de configuração do rig (exemplo)',
-      description: 'Example item. Replace with a real video link from the creator area.',
-      descriptionPt: 'Item de exemplo. Troque por um link de vídeo real pela área do criador.',
-      url: '#'
-    },
-    {
-      id: 'video-example-2',
-      title: 'Animation showcase (example)',
-      titlePt: 'Vitrine de animações (exemplo)',
-      description: 'Example item. Remove or edit it from the creator area.',
-      descriptionPt: 'Item de exemplo. Remova ou edite pela área do criador.',
-      url: '#'
-    }
-  ];
-}
-
 function utf8ToBase64(str) {
   const bytes = new TextEncoder().encode(str);
   let binary = '';
@@ -1152,15 +960,6 @@ function isValidUrl(url) {
     return parsed.protocol === 'http:' || parsed.protocol === 'https:';
   } catch (err) {
     return false;
-  }
-}
-
-function safeUrl(url) {
-  try {
-    const parsed = new URL(url, window.location.href);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : '#';
-  } catch (err) {
-    return '#';
   }
 }
 
@@ -1226,7 +1025,7 @@ function buildVideoPreview(video) {
   }
   if (isVideoFile(video.url)) {
     const player = document.createElement('video');
-    player.src = safeUrl(video.url);
+    player.src = video.url;
     player.controls = true;
     player.preload = 'metadata';
     box.appendChild(player);
@@ -1342,25 +1141,15 @@ async function detectFileInfo(url) {
 }
 
 async function loadCatalog() {
-  const banner = document.getElementById('configBanner');
-  if (!isConfigured) {
-    banner.classList.remove('hidden');
-    rigs = seedRigs();
-    videos = seedVideos();
-    render();
-    return;
-  }
-  banner.classList.add('hidden');
   try {
     const res = await fetch(RAW_URL + '?cache=' + Date.now());
     if (!res.ok) throw new Error('not found');
-    const data = await res.json();
-    const parsed = parseCatalog(data);
+    const parsed = parseCatalog(await res.json());
     rigs = parsed.rigs;
     videos = parsed.videos;
   } catch (err) {
-    rigs = seedRigs();
-    videos = seedVideos();
+    rigs = [];
+    videos = [];
   }
   render();
 }
@@ -1423,12 +1212,24 @@ async function persistCatalog() {
 }
 
 async function describeSaveError(err) {
-  if (err && err.message === 'conflict') {
-    try { await refreshFromRemote(); } catch (e) {}
-    render();
-    return t('err_conflict');
+  if (err.message !== 'conflict') return t('err_save');
+  await refreshFromRemote().catch(() => {});
+  return t('err_conflict');
+}
+
+async function saveChange(apply) {
+  const before = { rigs, videos };
+  apply();
+  let error = null;
+  try {
+    await persistCatalog();
+  } catch (err) {
+    rigs = before.rigs;
+    videos = before.videos;
+    error = await describeSaveError(err);
   }
-  return t('err_save');
+  render();
+  return error;
 }
 
 function uniqueKinds() {
@@ -1495,7 +1296,7 @@ function buildRigCard(rig) {
 
   const isFile = isFileItem(rig);
   const spec = document.createElement('div');
-  spec.className = 'card-spec mono';
+  spec.className = 'card-spec';
   const parts = isFile
     ? [rig.format, rig.size].filter(Boolean)
     : [isRobloxUrl(rig.url) ? 'Roblox Marketplace' : getDomain(rig.url)].filter(Boolean);
@@ -1507,7 +1308,7 @@ function buildRigCard(rig) {
   const download = document.createElement('a');
   download.className = 'download-btn';
   download.textContent = isFile ? t('download') : t('view');
-  download.href = safeUrl(rig.url);
+  download.href = rig.url;
   download.target = '_blank';
   download.rel = 'noopener noreferrer';
   actions.appendChild(download);
@@ -1553,7 +1354,7 @@ function buildVideoCard(video) {
   const domain = getDomain(video.url);
   if (domain) {
     const spec = document.createElement('div');
-    spec.className = 'card-spec mono';
+    spec.className = 'card-spec';
     spec.textContent = domain;
     card.appendChild(spec);
   }
@@ -1563,7 +1364,7 @@ function buildVideoCard(video) {
   const watch = document.createElement('a');
   watch.className = 'download-btn';
   watch.textContent = t('watch');
-  watch.href = safeUrl(video.url);
+  watch.href = video.url;
   watch.target = '_blank';
   watch.rel = 'noopener noreferrer';
   actions.appendChild(watch);
@@ -1607,24 +1408,11 @@ function render() {
 
 async function deleteItem(section, id) {
   if (!confirm(t('confirm_remove'))) return;
-  const previousRigs = rigs;
-  const previousVideos = videos;
-  if (section === 'rigs') {
-    rigs = rigs.filter(r => r.id !== id);
-  } else {
-    videos = videos.filter(v => v.id !== id);
-  }
-  render();
-  try {
-    await persistCatalog();
-    showGlobalStatus(t('removed'), 'var(--line)');
-  } catch (err) {
-    rigs = previousRigs;
-    videos = previousVideos;
-    const message = await describeSaveError(err);
-    render();
-    showGlobalStatus(message, 'var(--danger)');
-  }
+  const error = await saveChange(() => {
+    if (section === 'rigs') rigs = rigs.filter(r => r.id !== id);
+    else videos = videos.filter(v => v.id !== id);
+  });
+  showGlobalStatus(error || t('removed'), error ? 'var(--danger)' : 'var(--accent)');
 }
 
 function resetRigForm() {
@@ -1710,10 +1498,13 @@ document.getElementById('searchInput').addEventListener('input', e => {
   render();
 });
 
+function currentFormPanel() {
+  return document.getElementById(activeSection === 'videos' ? 'videoFormPanel' : 'rigFormPanel');
+}
+
 document.getElementById('adminToggle').addEventListener('click', () => {
   if (isAdmin) {
-    const panelId = activeSection === 'videos' ? 'videoFormPanel' : 'rigFormPanel';
-    document.getElementById(panelId).classList.toggle('hidden');
+    currentFormPanel().classList.toggle('hidden');
   } else {
     document.getElementById('gatePanel').classList.toggle('hidden');
   }
@@ -1724,7 +1515,7 @@ document.getElementById('gateSubmit').addEventListener('click', async () => {
   const token = document.getElementById('gateInput').value.trim();
   const errorEl = document.getElementById('gateError');
   errorEl.style.display = 'none';
-  if (!isConfigured || !token) {
+  if (!token) {
     errorEl.style.display = 'block';
     return;
   }
@@ -1742,8 +1533,7 @@ document.getElementById('gateSubmit').addEventListener('click', async () => {
     isAdmin = true;
     document.getElementById('gatePanel').classList.add('hidden');
     document.getElementById('gateInput').value = '';
-    const panelId = activeSection === 'videos' ? 'videoFormPanel' : 'rigFormPanel';
-    document.getElementById(panelId).classList.remove('hidden');
+    currentFormPanel().classList.remove('hidden');
     render();
   } else {
     adminToken = '';
@@ -1792,25 +1582,21 @@ document.getElementById('rigAddSubmit').addEventListener('click', async () => {
     descriptionPt: document.getElementById('fDescPt').value.trim(),
     url
   };
-  const previousRigs = rigs;
-  if (editingRigId) {
-    rigs = rigs.map(r => r.id === editingRigId ? { ...r, ...data } : r);
-  } else {
-    rigs = [...rigs, { id: newId('rig'), ...data }];
-  }
   status.textContent = t('saving');
   status.style.color = 'var(--text-muted)';
   button.disabled = true;
-  try {
-    await persistCatalog();
+  const error = await saveChange(() => {
+    rigs = editingRigId
+      ? rigs.map(r => r.id === editingRigId ? { ...r, ...data } : r)
+      : [...rigs, { id: newId('rig'), ...data }];
+  });
+  if (error) {
+    status.textContent = error;
+    status.style.color = 'var(--danger)';
+  } else {
     resetRigForm();
     status.textContent = t('saved');
-    status.style.color = 'var(--line)';
-    render();
-  } catch (err) {
-    rigs = previousRigs;
-    status.textContent = await describeSaveError(err);
-    status.style.color = 'var(--danger)';
+    status.style.color = 'var(--accent)';
   }
   button.disabled = false;
 });
@@ -1844,25 +1630,21 @@ document.getElementById('videoAddSubmit').addEventListener('click', async () => 
     descriptionPt: document.getElementById('vDescPt').value.trim(),
     url
   };
-  const previousVideos = videos;
-  if (editingVideoId) {
-    videos = videos.map(v => v.id === editingVideoId ? { ...v, ...data } : v);
-  } else {
-    videos = [...videos, { id: newId('video'), ...data }];
-  }
   status.textContent = t('saving');
   status.style.color = 'var(--text-muted)';
   button.disabled = true;
-  try {
-    await persistCatalog();
+  const error = await saveChange(() => {
+    videos = editingVideoId
+      ? videos.map(v => v.id === editingVideoId ? { ...v, ...data } : v)
+      : [...videos, { id: newId('video'), ...data }];
+  });
+  if (error) {
+    status.textContent = error;
+    status.style.color = 'var(--danger)';
+  } else {
     resetVideoForm();
     status.textContent = t('saved');
-    status.style.color = 'var(--line)';
-    render();
-  } catch (err) {
-    videos = previousVideos;
-    status.textContent = await describeSaveError(err);
-    status.style.color = 'var(--danger)';
+    status.style.color = 'var(--accent)';
   }
   button.disabled = false;
 });
@@ -2079,14 +1861,14 @@ document.getElementById('fUrl').addEventListener('change', async () => {
     formatField.value = '';
     sizeField.value = '';
     status.textContent = info.roblox ? t('roblox_detected') : t('no_file');
-    status.style.color = 'var(--line)';
+    status.style.color = 'var(--accent)';
     return;
   }
   if (info.format) formatField.value = info.format;
   if (info.size) {
     sizeField.value = info.size;
     status.textContent = t('size_detected') + info.size;
-    status.style.color = 'var(--line)';
+    status.style.color = 'var(--accent)';
   } else {
     status.textContent = t('size_failed');
     status.style.color = 'var(--text-muted)';
