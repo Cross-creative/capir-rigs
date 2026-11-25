@@ -20,9 +20,8 @@ Animator Bench is a static website (a single HTML file) that works as a catalog 
 - Smart buttons: file links show "Download", while pages such as the Roblox Marketplace show "View".
 - Automatic file size and format detection for GitHub Releases links.
 - Video previews for YouTube links and direct .mp4, .webm and .ogg files.
-- Interactive stick figure in the header (drag it like jelly).
 - Language switch (English / Portuguese) with automatic detection, and optional texts in both languages for every item.
-- Responsive layout, keyboard focus styles and reduced-motion support.
+- Responsive layout and an interactive stick figure in the header.
 
 ### Files
 
@@ -31,11 +30,11 @@ Animator Bench is a static website (a single HTML file) that works as a catalog 
 - favicon.png: browser tab icon.
 - rigs.json: the catalog data, created automatically on the first save from the Creator area.
 - LICENSE: GNU AGPL v3.
-- README.md and README.txt: this file.
+- README.md: this file.
 
 ### Setup
 
-1. Put the files in the root of the main branch of your repository.
+1. Put the files in the root of the main branch of your repository. The repository must be public, because the site reads rigs.json from raw.githubusercontent.com.
 2. At the top of the script in index.html, set GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH and DATA_PATH.
 3. Enable GitHub Pages: Settings > Pages > Deploy from a branch > main / (root).
 4. Upload your files to a Release (Releases > Draft a new release) and use the asset download links.
@@ -43,6 +42,22 @@ Animator Bench is a static website (a single HTML file) that works as a catalog 
 6. Open the site, click "Creator area", paste the token and start adding items.
 
 The token is only kept in memory while the page is open. It is never stored or written to the code, and reloading the page signs you out.
+
+Until rigs.json exists (before the first save from the Creator area), the catalog shows up empty.
+
+### Notes
+
+The site loads its font (Inter) from Google Fonts.
+
+### Content and credits
+
+The license below covers the source code of the site only. Rigs, resources, plugins and videos listed in the catalog belong to their respective creators and may have their own licenses. Only publish files you have permission to share, and give credit to the authors. If you own something listed here and want it removed, please open an issue.
+
+### License
+
+Copyright (C) 2026 Cross Creative & Capis. This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License, version 3, as published by the Free Software Foundation. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the LICENSE file for the full text.
+
+Because this is the AGPL, if you modify the site and host it for other people, you must offer your visitors the source code of your version. The icon in the header links to the repository set in GITHUB_OWNER and GITHUB_REPO, so point those to your own repository.
 
 ### Data format
 
@@ -77,16 +92,6 @@ rigs.json holds two lists. The "section" field of an item can be rigs, resources
 }
 ```
 
-### Content and credits
-
-The license below covers the source code of the site only. Rigs, resources, plugins and videos listed in the catalog belong to their respective creators and may have their own licenses. Only publish files you have permission to share, and give credit to the authors. If you own something listed here and want it removed, please open an issue.
-
-### License
-
-Copyright (C) 2026 Cross Creative & Capis. This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License, version 3, as published by the Free Software Foundation. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the LICENSE file for the full text.
-
-Because this is the AGPL, if you modify the site and host it for other people, you must offer your visitors the source code of your version. The icon in the header links to the repository set in GITHUB_OWNER and GITHUB_REPO, so point those to your own repository.
-
 ---
 
 ## Português
@@ -99,15 +104,14 @@ O Animator Bench é um site estático (um único arquivo HTML) que funciona como
 
 ### Recursos
 
-- Quatro seções: Rigs, Resources, Plugins/Programs e Videos.
+- Quatro seções: Rigs, Recursos, Plugins/Programas e Vídeos.
 - Busca por nome ou descrição e filtro por categoria.
 - Área do criador para adicionar, editar, mover e remover itens, salvando direto no repositório pela API do GitHub.
-- Botões inteligentes: links de arquivo mostram "Download", e páginas como o Roblox Marketplace mostram "View".
+- Botões inteligentes: links de arquivo mostram "Baixar", e páginas como o Roblox Marketplace mostram "Ver".
 - Detecção automática de tamanho e formato para links do GitHub Releases.
 - Prévia de vídeo para links do YouTube e arquivos .mp4, .webm e .ogg diretos.
-- Boneco interativo no topo da página (arraste como se fosse gelatina).
 - Seletor de idioma (inglês / português) com detecção automática e textos opcionais nos dois idiomas em cada item.
-- Layout responsivo, foco visível no teclado e suporte a movimento reduzido.
+- Layout responsivo e boneco interativo no topo da página.
 
 ### Arquivos
 
@@ -116,18 +120,34 @@ O Animator Bench é um site estático (um único arquivo HTML) que funciona como
 - favicon.png: ícone da aba do navegador.
 - rigs.json: os dados do catálogo, criado automaticamente no primeiro salvamento pela área do criador.
 - LICENSE: GNU AGPL v3.
-- README.md e README.txt: este arquivo.
+- README.md: este arquivo.
 
 ### Instalação
 
-1. Coloque os arquivos na raiz da branch main do seu repositório.
+1. Coloque os arquivos na raiz da branch main do seu repositório. O repositório precisa ser público, porque o site lê o rigs.json de raw.githubusercontent.com.
 2. No topo do script do index.html, defina GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH e DATA_PATH.
 3. Ative o GitHub Pages: Settings > Pages > Deploy from a branch > main / (root).
 4. Envie seus arquivos para uma Release (Releases > Draft a new release) e use os links de download dos arquivos.
 5. Crie um token de acesso pessoal fine-grained limitado a este repositório, com a permissão Contents: Read and write.
-6. Abra o site, clique em "Creator area", cole o token e comece a adicionar itens.
+6. Abra o site, clique em "Área do criador", cole o token e comece a adicionar itens.
 
 O token fica só na memória enquanto a página está aberta. Ele nunca é guardado nem escrito no código, e recarregar a página encerra o acesso.
+
+Enquanto o rigs.json não existir (antes do primeiro salvamento pela área do criador), o catálogo aparece vazio.
+
+### Observações
+
+O site carrega a fonte (Inter) do Google Fonts.
+
+### Conteúdo e créditos
+
+A licença abaixo cobre somente o código-fonte do site. Rigs, recursos, plugins e vídeos listados no catálogo pertencem aos seus respectivos criadores e podem ter licenças próprias. Publique apenas arquivos que você tem permissão para compartilhar e dê o crédito aos autores. Se algo listado aqui é seu e você quer a remoção, abra uma issue.
+
+### Licença
+
+Copyright (C) 2026 Cross Creative & Capis. Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo sob os termos da GNU Affero General Public License, versão 3, publicada pela Free Software Foundation. Ele é distribuído na esperança de que seja útil, mas SEM NENHUMA GARANTIA; sem sequer a garantia implícita de COMERCIALIZAÇÃO ou ADEQUAÇÃO A UM PROPÓSITO ESPECÍFICO. Veja o arquivo LICENSE para o texto completo.
+
+Como a licença é a AGPL, se você modificar o site e hospedá-lo para outras pessoas, precisa oferecer o código-fonte da sua versão aos visitantes. O ícone do topo leva ao repositório definido em GITHUB_OWNER e GITHUB_REPO, então aponte essas constantes para o seu próprio repositório.
 
 ### Formato dos dados
 
@@ -161,13 +181,3 @@ O rigs.json tem duas listas. O campo "section" de um item pode ser rigs, resourc
   ]
 }
 ```
-
-### Conteúdo e créditos
-
-A licença abaixo cobre somente o código-fonte do site. Rigs, recursos, plugins e vídeos listados no catálogo pertencem aos seus respectivos criadores e podem ter licenças próprias. Publique apenas arquivos que você tem permissão para compartilhar e dê o crédito aos autores. Se algo listado aqui é seu e você quer a remoção, abra uma issue.
-
-### Licença
-
-Copyright (C) 2026 Cross Creative & Capis. Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo sob os termos da GNU Affero General Public License, versão 3, publicada pela Free Software Foundation. Ele é distribuído na esperança de que seja útil, mas SEM NENHUMA GARANTIA; sem sequer a garantia implícita de COMERCIALIZAÇÃO ou ADEQUAÇÃO A UM PROPÓSITO ESPECÍFICO. Veja o arquivo LICENSE para o texto completo.
-
-Como a licença é a AGPL, se você modificar o site e hospedá-lo para outras pessoas, precisa oferecer o código-fonte da sua versão aos visitantes. O ícone do topo leva ao repositório definido em GITHUB_OWNER e GITHUB_REPO, então aponte essas constantes para o seu próprio repositório.
