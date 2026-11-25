@@ -12,7 +12,7 @@
 
 Animator Bench is a static website (a single HTML file) that works as a catalog for animators. It is hosted on GitHub Pages and uses a JSON file in this repository (rigs.json) as its database, so no backend is needed. Source code: https://github.com/Cross-creative/capir-rigs
 
-Oficial Site: https://cross-creative.github.io/capir-rigs/
+Official site: https://cross-creative.github.io/capir-rigs/
 
 ### Features
 
@@ -103,6 +103,8 @@ rigs.json holds two lists. The "section" field of an item can be rigs, resources
 ### Sobre
 
 O Animator Bench é um site estático (um único arquivo HTML) que funciona como catálogo para animadores. Ele fica hospedado no GitHub Pages e usa um arquivo JSON deste repositório (rigs.json) como banco de dados, então não precisa de servidor. Código-fonte: https://github.com/Cross-creative/capir-rigs
+
+Site oficial: https://cross-creative.github.io/capir-rigs/
 
 ### Recursos
 
